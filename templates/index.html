@@ -1,0 +1,523 @@
+{% extends "base.html" %}
+{%- block titlehead -%}
+{%- with pagetitle = getSettingValueLang('pagetitle_index',CURRENT_LOCALE) -%}
+{%- if pagetitle -%}
+{{ pagetitle | safe }}
+{%- endif -%}
+{%- endwith -%}
+{%- endblock titlehead %}
+{% block head %}
+{% endblock head %}
+{% block content %}
+{% with maintenance_message = getSettingValueLang('text_maintenance_message',CURRENT_LOCALE) %}
+{% if maintenance_message %}
+{{ maintenance_message | safe }}
+{% endif %}
+{% endwith %}
+
+<div class="flex justify-center mt-8 bg-oajf-text-bg">
+<div class="grid grid-cols-1 mx-[20px] lg:mx-[200px]">
+{%- with application_name = getSettingValueLang('application_name',CURRENT_LOCALE) -%}
+{%- if application_name -%}
+<h1 class="oajf-textstyle-heading-1 text-left">{{ application_name|safe }}</h1>
+{%- endif -%}
+{%- endwith -%}
+<span class="oajf-textstyle-text text-left max-w-[110ch] mt-6">
+{%- with text = getSettingValueLang('text_index',CURRENT_LOCALE) -%}
+{%- if text -%}
+{{ text | safe }}
+{%- endif -%}
+{%- endwith -%}
+</span>
+</div>
+</div>
+
+<div id="search_field"></div>
+<div class="flex sticky top-oajf-header z-100 pt-6 pb-6 items-center justify-start opacity-100 bg-oajf-text-bg mx-[20px] lg:mx-[200px]">
+<form id="form" class="flex text-center items-center" method="post" onkeydown="return event.key != 'Enter';">
+    <label for="keyword" class="sr-only">Search</label>
+    <div class="relative flex">
+        <div class="flex basis-11/12 absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+            <span class="text-gray-700 w-5 h-5 icon-[heroicons--magnifying-glass]"></span>    
+        </div>
+        <div id="dropdown_container" onkeydown="select_next_row()"> 
+            <input type="text" name="keyword" id="keyword" class="min-w-[300px] md:w-[600px] bg-white border-2 border-gray-600 text-gray-900 text-sm rounded-lg 
+            focus:rounded-lg focus:border focus:border-[#006699] focus:ring-4 focus:ring-blue-300
+            block pl-10 p-2.5" placeholder="{{ _('Zeitschriften nach Titel oder ISSN oder Verlag suchen') }}" {% if keyword %} value="{{ keyword }}" {% endif %} 
+            autocomplete="off">
+            <div id="dropdown" class="text-left z-50 text-sm absolute max-h-52 w-full overflow-y-scroll drop-shadow-sm bg-white [&_a]:p-2 [&_a]:block [&_a]:hover:bg-gray-50
+            [&_a]:focus:bg-gray-100 [&_a]:focus:outline-hidden hidden"></div>
+        </div>
+        <button id="delete_keyword" class="flex absolute inset-y-0 right-2 px-2 items-center 
+            hover:cursor-pointer hover:rounded-lg hover:border hover:border-[#006699] hover:ring-4 hover:ring-blue-300
+            focus:outline-hidden focus:rounded-lg focus:border focus:border-[#006699] focus:ring-4 focus:ring-blue-300"
+            alt="{{ _('Keyword löschen') }}">
+            <span class="w-5 h-5 icon-[heroicons--backspace]"></span>            
+        </button>
+    </div>
+    <button id="btn_search" type="submit" class="flex items-center p-2.5 ml-2 text-sm font-medium text-white bg-oajf-1 rounded-lg
+    hover:cursor-pointer hover:rounded-lg hover:border hover:border-[#006699] hover:ring-4 hover:ring-blue-300
+    focus:outline-hidden focus:rounded-lg focus:border focus:border-[#006699] focus:ring-4 focus:ring-blue-300">
+    <span class="w-5 h-5 icon-[heroicons--magnifying-glass]"></span>    
+    <span class="sr-only">Search</span>
+    </button>
+    <span class="basis-1/2 text-sm text-gray-700 ml-4">
+        {% if length == 0 %}                
+        {{ _('Ihre Suche liefert <span class="font-semibold text-gray-900">0</span> Ergebnisse.') }}
+        {% else %}
+        {{ _('Es werden <span class="font-semibold text-gray-900">%(start)d</span> bis <span class="font-semibold text-gray-900">%(end)d</span> von <span class="font-semibold text-gray-900 ">%(length)d</span> Einträgen angezeigt.', length=length, start=start, end=end) }}
+        {% endif %}
+    </span>
+    <label for="input_page" class="hidden">hidden_page</label>
+    <input id="input_page" type="text" class="hidden" name="page" value="{{ page }}">
+    <label for="order" class="hidden">order</label>
+    <input id="order" type="text" class="hidden" name="order" value="{{ order }}">
+    <label for="sort_toggle" class="hidden">sort_toggle</label>
+    <input id="sort_toggle" type="text" class="hidden" name="sort_toggle" value="{{ sort_toggle }}">
+</form>
+</div>
+
+
+{% if length >= 1 %}
+<div class="grid mx-[20px] lg:mx-[200px] grid-cols-7 md:grid-cols-9 p-5 oajf-table-heading">
+    <div class="col-span-2 flex items-center text-center">
+        {{ gettext("Titel") }}
+        {%- if 'title.ASC' in order -%}
+        {% set id = 'title-sort-ascending' %}
+        {% set alttext = _('Titel ansteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-top]' %}
+        {%- elif 'title.DESC' in order -%}
+        {% set id = 'title-sort-descending' %}
+        {% set alttext = _('Titel absteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-bottom]' %}
+        {%- else -%}
+        {% set id = 'title-sort-not-set' %}
+        {% set icon = 'icon-[ep--d-caret]' %}
+        {% set alttext = _('Titel unsortiert') %}
+        {%- endif -%}
+        <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},0,'title')"><span class="inherit {{ icon }}"></span></button>
+    </div>
+    <div class="ml-2 col-span-1 flex items-center text-center">
+        {{ gettext("E-ISSN") }}
+        {%- if 'e_issn.ASC' in order -%}
+        {% set id = 'e_issn-sort-ascending' %}
+        {% set alttext = _('E-ISSN ansteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-top]' %}
+        {%- elif 'e_issn.DESC' in order -%}
+        {% set id = 'e_issn-sort-descending' %}
+        {% set alttext = _('E-ISSN absteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-bottom]' %}
+        {%- else -%}
+        {% set id = 'e_issn-sort-not-set' %}
+        {% set icon = 'icon-[ep--d-caret]' %}
+        {% set alttext = _('E-ISSN unsortiert') %}
+        {%- endif -%}
+        <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},0,'e_issn')"><span class="inherit {{ icon }}"></span></button>
+    </div>
+    <div class="ml-2 col-span-1 flex items-center text-center">
+        {{ gettext("OA-Status") }}
+        {%- if 'oa_status.ASC' in order -%}
+        {% set id = 'oa_status-sort-ascending' %}
+        {% set alttext = _('OA-Status ansteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-top]' %}
+        {%- elif 'oa_status.DESC' in order -%}
+        {% set id = 'oa_status-sort-descending' %}
+        {% set alttext = _('OA-Status absteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-bottom]' %}
+        {%- else -%}
+        {% set id = 'oa_status-sort-not-set' %}
+        {% set icon = 'icon-[ep--d-caret]' %}
+        {% set alttext = _('OA-Status unsortiert') %}
+        {%- endif -%}
+        <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},0,'oa_status')"><span class="inherit {{ icon }}"></span></button>
+    </div>
+    <div class="ml-2 col-span-2 flex items-center text-center">
+        {{ gettext("Verlag") }}
+        {%- if 'publisher.ASC' in order -%}
+        {% set id = 'publisher-sort-ascending' %}
+        {% set alttext = _('Verlag ansteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-top]' %}
+        {%- elif 'publisher.DESC' in order -%}
+        {% set id = 'publisher-sort-descending' %}
+        {% set alttext = _('Verlag absteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-bottom]' %}
+        {%- else -%}
+        {% set id = 'publisher-sort-not-set' %}
+        {% set icon = 'icon-[ep--d-caret]' %}
+        {% set alttext = _('Verlag unsortiert') %}
+        {%- endif -%}
+        <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},0,'publisher')"><span class="inherit {{ icon }}"></span></button>
+    </div>
+    <div class="ml-2 col-span-2 flex items-center text-center">
+        {{ gettext("Kostenübernahme") }}
+        {%- if 'application_requirement.ASC' in order -%}
+        {% set id = 'application_requirement-sort-ascending' %}
+        {% set alttext = _('Kostenübernahme ansteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-top]' %}
+        {%- elif 'application_requirement.DESC' in order -%}
+        {% set id = 'application_requirement-sort-descending' %}
+        {% set alttext = _('Kostenübernahme absteigend sortiert') %}
+        {% set icon = 'icon-[ep--caret-bottom]' %}
+        {%- else -%}
+        {% set id = 'application_requirement-sort-not-set' %}
+        {% set icon = 'icon-[ep--d-caret]' %}
+        {% set alttext = _('Kostenübernahme unsortiert') %}
+        {%- endif -%}
+        <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},0,'application_requirement')"><span class="inherit {{ icon }}"></span></button>
+    </div>
+</div>
+
+<div class="accordion z-50">
+    {%- for j in entries %}
+    <div class="accordion-item" id="item-{{ j.id }}">
+        <div class="accheader accordion-header"">
+            <div class="grid mx-[20px] lg:mx-[200px] grid-cols-7 md:grid-cols-9 p-5 font-medium text-left border border-b-0 border-gray-200 focus:ring-4 focus:ring-gray-200 hover:bg-gray-100">
+                <div class="col-span-2 flex justify-start items-center">
+                    {%- if j.url -%}
+                        <a href="{{ j.url }}" target="_blank"><span class="highlightable font-medium">{{ j.title }}</span></a>
+                    {%- else -%}
+                        <span class="highlightable">{{ j.title }}</span>
+                    {%- endif -%}    
+                </div>
+                <div class="hidden md:flex ml-2 justify-start items-center">{% if j.e_issn %}<span class="highlightable">{{ j.e_issn }}</span>{% endif %}</div>
+                <div class="hidden md:flex ml-2 justify-start items-center">{{ j.publisher.oa_status.label }}</div>
+                <div class="ml-2 col-span-2 flex justify-start items-center"><span class="highlightable">{{ j.publisher.name }}</span></div>
+                <div class="ml-2 col-span-2 flex justify-start items-center">
+                    {%- if j.publisher.application_requirement and j.publisher.application_requirement.key == APPREQ_REQUIRED.key -%}                    
+                    <ul class="list-disc">
+                        <li>
+                            <a href="{{ getSettingValueLang('application_form_publication_funds_url',CURRENT_LOCALE) }}">{{ getSettingValueLang('application_form_publication_funds_label',CURRENT_LOCALE) }}</a>
+                        </li>
+                        <li>
+                            <a href="{{ getSettingValueLang('application_form_fwf_url',CURRENT_LOCALE) }}">{{ getSettingValueLang('application_form_fwf_label',CURRENT_LOCALE) }}</a>
+                        </li>
+                    </ul>
+                    {%- else -%}
+                    {{ _('Kein Antrag erforderlich') }}
+                    {%- endif -%}
+                </div>
+                <div class="accordion-more hover:cursor-pointer ml-2 flex justify-start items-center">{{ _('mehr anzeigen') }}&hellip;</div>
+            </div>
+        </div>
+        <div class="accordion-content hidden mx-[20px] lg:mx-[200px] text-left">
+            <div class="overflow-x-auto shadow-md sm:rounded-lg my-4">
+                    <div class="grid grid-cols-1 zz:grid-cols-4 ml-4 my-4">
+                    {%- if j.publisher.oa_status -%}
+                    <div class="accbodyheader md:hidden font-bold mb-3">{{ _("OA-Status") }}</div>
+                    <div class="accbodycontent md:hidden col-span-3 mb-3">{{ j.publisher.oa_status.label|safe }}</div>
+                    {%- endif -%}
+                    {% if CURRENT_LOCALE == 'de' and j.publisher.valid_tu -%}
+                    <div class="accbodyheader mb-3">{{ _("Gültig für") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3"> {{ j.publisher.valid_tu|safe }}</div>
+                    {%- endif -%}
+                    {%- if CURRENT_LOCALE == 'en' and j.publisher.valid_tu_en -%}
+                    <div class="accbodyheader mb-3">{{ _("Gültig für") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.publisher.valid_tu_en|safe }}</div>
+                    {%- endif -%}
+                    {%- if j.publisher.validity -%}
+                    <div class="accbodyheader mb-3">{{ _("Vertragslaufzeit") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">
+                    {%- if CURRENT_LOCALE == 'en' %}                        
+                    {{ j.publisher.validity|safe|replace("in Verhandlung","under negotiation") }}
+                    {%- else -%}    
+                    {{ j.publisher.validity|safe }}
+                    {%- endif -%}
+                    </div>
+                    {%- endif -%}
+                    {%- if CURRENT_LOCALE == 'de' and j.publisher.cost_coverage -%}
+                    <div class="accbodyheader mb-3">{{ _("Kostenübernahme") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.publisher.cost_coverage|safe }}</div>
+                    {%- endif -%}
+                    {%- if CURRENT_LOCALE == 'en' and j.publisher.cost_coverage_en -%}
+                    <div class="accbodyheader mb-3">{{ _("Kostenübernahme") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.publisher.cost_coverage_en|safe }}</div>
+                    {%- endif -%}
+                    {%- if CURRENT_LOCALE == 'en' and j.publisher.article_type_en -%}
+                    <div class="accbodyheader mb-3">{{ _("Artikeltyp") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.publisher.article_type_en|safe }}</div>
+                    {%- endif %}
+                    {% if CURRENT_LOCALE == 'de' and j.publisher.article_type -%}
+                    <div class="accbodyheader mb-3">{{ _("Artikeltyp") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.publisher.article_type|safe }}</div>
+                    {%- endif %}
+                    {%- if CURRENT_LOCALE == 'de' and j.publisher.funder_info -%}
+                    <div class="accbodyheader mb-3">{{ _("Ablauf") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.publisher.funder_info|safe }}</div>
+                    {%- endif %}
+                    {% if CURRENT_LOCALE == 'en' and  j.publisher.funder_info_en -%}
+                    <div class="accbodyheader mb-3">{{ _("Ablauf") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.publisher.funder_info_en|safe }}</div>
+                    {%- endif %}
+                    {%- if CURRENT_LOCALE == 'de' and j.publisher.further_info -%}
+                    <div class="accbodyheader mb-3">{{ _("Sonderbestimmungen FWF") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.publisher.further_info|safe }}</div>
+                    {%- endif %}
+                    {%- if CURRENT_LOCALE == 'en' and  j.publisher.further_info_en -%}
+                    <div class="accbodyheader mb-3">{{ _("Sonderbestimmungen FWF") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.publisher.further_info_en|safe }}</div>
+                    {%- endif -%}
+                    {# links #}
+                    {%- if j.publisher.links -%}
+                    <div class="accbodyheader mb-3">{{ _("Link") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">
+                    {%- for link in j.publisher.links -%}
+                    {%- if loop.index0 > 0 -%}<br>{%- endif -%}
+                    <a class="accbodycontent" target="_blank" href="{{ link.link }}">
+                    {%- if CURRENT_LOCALE == 'de' -%}
+                    {{ link.linktext_de }}
+                    {%- elif CURRENT_LOCALE == 'en' -%}
+                    {{ link.linktext_en }}
+                    {%- endif -%}
+                    </a>               
+                    {%- endfor -%}
+                    </div>
+                    {%- endif %}
+                    {%- if j.print_issn -%}
+                    <div class="accbodyheader mb-3">{{ _("Print-ISSN") }}</div>
+                    <div class="accbodycontent col-span-3 mb-3">{{ j.print_issn|safe }}</div>
+                    {%- endif %}
+                    {%- if j.e_issn -%}
+                    <div class="accbodyheader md:hidden font-bold mb-3">{{ _("E-ISSN") }}</div>
+                    <div class="accbodycontent md:hidden col-span-3 mb-3">{{ j.e_issn|safe }}</div>
+                    {%- endif -%}
+                    </div>        
+                </div>        
+        </div>
+    </div>
+    {%- endfor -%}
+</div>
+
+<div id="page_nav" class="flex justify-center items-center h-10 mt-4 w-full">
+    <ul class="flex items-center ml-4">
+        <li>
+            <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},0,null);" 
+                class="block mr-1 py-2 px-3 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+                <span class="sr-only">First</span>
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160zm352-160l-160 160c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L301.3 256 438.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0z"/></svg>                
+            </button>
+        </li>
+        <li>
+            <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},{{ page-1 }},null);" 
+                class="block mr-1 py-2 px-3 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+                <span class="sr-only">Previous</span>
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>            
+            </button>
+        </li>
+        
+        {% for p in range([[0,page-5]|max,[pages-11,0]|max]|min,[[pages,page+6]|min,[11,pages]|min]|max) %}
+            <li>
+                <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},{{ p }},null);" 
+                    class="py-2 px-3 w-12 text-center leading-tight
+                    {% if page==p %} text-blue-600 border-blue-300 hover:text-blue-700 hover:bg-blue-100 bg-blue-50 border
+                    {% else %} text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700
+                    {% endif %}
+                    ">{{ p+1 }}
+                </button>
+            </li>
+        {% endfor %}
+        <li>
+            <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},{{ page+1 }},null)" 
+                class="block ml-1 py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+                <span class="sr-only">Next</span>
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg>            
+            </button>
+        </li>
+        <li>
+            <button onclick="submit_form({% if keyword %}'{{ keyword }}'{% else %}null{% endif %},{{ pages }},null)" 
+                class="block ml-1 py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+                <span class="sr-only">Last</span>
+                <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M470.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 256 265.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160zm-352 160l160-160c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L210.7 256 73.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0z"/></svg>                
+            </button>
+        </li>
+    </ul>
+</div>
+{% endif %}
+
+{# scrollbuttons #}
+<div class="flex flex-col fixed top-1/2 right-6 w-10 items-center">
+    <button id="btn_scroll_to_search_field" class="p-2.5 ml-2 text-sm font-medium text-black bg-oajf-gray-3 rounded-lg
+    hover:cursor-pointer hover:rounded-lg hover:border hover:border-[#006699] hover:ring-4 hover:ring-blue-300">
+    <span alt="{{ _('Nach oben scrollen') }}"" class="rotate-180 w-4 h-4 icon-[heroicons--chevron-down-solid]"></span>
+    </button>
+    <button id="btn_scroll_to_page_nav" class="p-2.5 ml-2 text-sm font-medium text-black bg-oajf-gray-3 rounded-lg
+    hover:cursor-pointer hover:rounded-lg hover:border hover:border-[#006699] hover:ring-4 hover:ring-blue-300">
+    <span alt="{{ _('Nach unten scrollen') }}"" class="w-4 h-4 icon-[heroicons--chevron-down-solid]"></span>
+    </button>
+</div>
+{% endblock content %}
+
+{% block additional %}
+<script>
+    var ajax = {
+        counter: 0,
+        call: function(data,keyword) 
+        {
+            var self = this,
+            seq = ++this.counter;
+            $.ajax({
+                url: '{{ url_for("fetch_some_journals") }}',
+                method: "POST",
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function(data) {
+                    if (seq === self.counter) 
+                    {
+                        const $dropdown = $("#dropdown");                        
+                        if (data.length > 0) { 
+                                $dropdown.attr("tabindex", "0"); 
+                        } 
+                        else { 
+                                $dropdown.attr("tabindex", "-1"); 
+                        }
+                        for (let i = 0; i < Object.keys(data).length; i++) {
+                            let $title = $("<button>").addClass("text-left");
+                            j = data[i];
+                            
+                            // this is needed, can't use j.title directly for event handler below, last value is used
+                            let freeze = j.title;
+                            s = j.title;
+                            s = s + (('print_issn' in j && j.print_issn != '' && j.print_issn != undefined) ? (' / ' + j.print_issn) : (''));
+                            s = s + (('e_issn' in j && j.e_issn != '' && j.e_issn != undefined) ? (' / ' + j.e_issn) : (''));
+                            s = s + ' / ' + j.publisher.name;
+                            
+                            // search for issn if available
+                            if (j && j.print_issn != '' && j.print_issn != undefined) {
+                                freeze = j.print_issn;
+                            }
+                            if (j && j.e_issn != '' && j.e_issn != undefined) {
+                                freeze = j.e_issn;
+                            }
+                            
+                            $title.html(highlight(s, keyword));
+                            $title.attr('tabindex', '-1');
+                            
+                            $title.on('click', function() { 
+                                submit_form(freeze, 0, null, null); 
+                            });
+                            
+                            $title.on('keyup', function(event) {
+                                if (event.key === "Enter") {
+                                    event.preventDefault();
+                                    submit_form(freeze, 0, null, null);
+                                }
+                            });
+                            
+                            $dropdown.append($title);
+                            $dropdown.append($("<br>"));
+                        }
+                    }
+                }
+            });
+        }
+    }
+    
+    function fetch_data() {
+        const dropdown = $("#dropdown");
+        dropdown.empty();
+        dropdown.removeClass('hidden');
+        const keyword = $("#keyword").val();
+        const data = new FormData();
+        data.append("keyword", keyword);
+        ajax.call(data,keyword);
+    }
+    
+
+    function select_next_row(e) {
+        e = e || window.event;
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            var $sibling = $(document.activeElement).next();            
+            if ($sibling.prop('nodeName').toLowerCase() === 'br') { 
+                $sibling = $sibling.next(); 
+            }            
+            
+            if ($sibling.length > 0) {
+                if ($sibling.prop('nodeName').toLowerCase() === "div") {
+                    $sibling.children().first().focus();
+                } else {
+                    $sibling.focus();
+                }
+            }        
+        } 
+        else if (e.key === 'ArrowUp') {
+            var $sibling = $(document.activeElement).prev();
+            if ($sibling.length === 0) {
+                $("#keyword").focus();
+            }
+            else {
+                if ($sibling.prop('tagName').toLowerCase() === 'br') { 
+                    $sibling = $sibling.prev(); 
+                }
+                if ($sibling.length > 0) {
+                    $sibling.focus();
+                }
+            }        
+        }
+    }
+
+    function keyuphandler(event) {
+        var source = $(event.target);
+        var val = source.val();
+
+        if (event.key === "Enter") {
+            event.preventDefault();
+            submit_form(val,$("#input_page").val(),null);
+        }
+    }
+
+    function submit_form(keyword=null,page=null,sort_toggle=null) {
+        if (keyword !== null) { 
+            $("#keyword").val(keyword); 
+        } 
+        if (page !== null) { 
+            $("#input_page").val(page); 
+        }
+        if (sort_toggle !== null) { 
+            $("#sort_toggle").val(sort_toggle); 
+        }
+
+        $("#form").submit();        
+    }
+
+
+    $(document).ready(function() { 
+        {% if keyword %}        
+        $(".highlightable").each(function () { 
+            $(this).get(0).innerHTML = highlight($(this).get(0).innerText, '{{ keyword }}'); 
+        });
+        {% endif %}
+
+        $(".accordion-more").click(function () {
+            $(this).parents(".accordion-header").siblings(".accordion-content").first().toggle();
+            var id = $(this).parents(".accordion-item").first().attr('id').substring(5);
+            const url = '{{ url_for("item_clicked") }}';
+            $.post(url, { journal_id: id});
+        });
+
+        $('#keyword').on('keyup', function(event) { 
+            keyuphandler(event);  
+        });
+        $('#keyword').on('input', function(event) { 
+            fetch_data(); 
+        });
+
+        $('#delete_keyword').on('click', function(event) { 
+            $('#keyword').val(""); 
+        });
+        $('#delete_keyword').on('keyup', function(event) { 
+            if (event.key === "Enter") 
+            {
+                 event.preventDefault();
+                 $('#delete_keyword').trigger('click');
+            }
+        });
+        $('#btn_scroll_to_page_nav').on('click', function(event) {  
+            $('#page_nav')[0].scrollIntoView({ behavior: "smooth", block: "end" }); 
+        });
+        $('#btn_scroll_to_search_field').on('click', function(event) { 
+            $('#search_field')[0].scrollIntoView({ behavior: "smooth", block: "end" }); 
+        });
+    });
+</script>
+{% endblock additional %}

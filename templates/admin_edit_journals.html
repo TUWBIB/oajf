@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+{% block title %}
+Admin - Edit
+{% endblock title %}
+
+{% block content %}
+<form id="search_form" class="flex items-center justify-start w-full ml-4 mt-4" method="post">   
+    <div class="relative w-64">
+        <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+            <span class="text-gray-500 w-5 h-5 icon-[heroicons--magnifying-glass]"></span>                
+        </div>
+        <input type="text" name="keyword" id="keyword" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5" placeholder="Keyword" {% if keyword %} value="{{ keyword }}" {% endif %} autocomplete="off">
+    </div>
+    <label for="only_active" class="ml-8">{{ _("nur aktive Journals") }}</label>
+    <input type="checkbox" class="ml-2" name="only_active" id="only_active" {% if only_active %} checked {% endif %}>
+    <label class="ml-8 text-black" for="publisher">{{ _('nach Verlag filtern') }}</label>
+    <select class=" ml-2 bg-white  text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500" name="publisher" id="publisher">
+        <option value="-1">{{ _("&lt;Alle Verlage&gt;") }}</option>
+        {% for p in g.publishers %}
+        <option value="{{ p.id }}" {% if publisher and publisher.id == p.id %} selected{% endif %}>{{ p.name }}{% if p.oa_status %}{{ " (" + p.oa_status.label + ")" }}{% endif %}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" id="submit_search" name="btn-search" title="Suche" class="p-2.5 ml-2 hover:underline">
+        <span class="w-5 h-5 icon-[heroicons--magnifying-glass]"></span>    
+        {{ _('Suche') }}
+    </button>
+    <button type="submit" id="submit_download" name="btn-download" title="Download" class="p-2.5 ml-2 hover:underline">
+        <span class="w-5 h-5 icon-[vscode-icons--file-type-excel]"></span>
+        {{ _('Download') }}
+    </button>
+    <label for="input_page" class="hidden">hidden_page</label>
+    <input id="input_page" type="text" class="hidden" name="page" value="{{ page }}">
+    <label for="order" class="hidden">order</label>
+    <input id="order" type="text" class="hidden" name="order" value="{{ order }}">
+    <label for="sort_toggle" class="hidden">sort_toggle</label>
+    <input id="sort_toggle" type="text" class="hidden" name="sort_toggle" value="{{ sort_toggle }}">
+    <label for="submit_action" class="hidden">submit_action</label>
+    <input id="submit_action" type="text" class="hidden" name="submit_action" value="">
+</form>
+{% if length > 0 %}
+<p class="text-sm text-gray-700 ml-4 mt-4">{{ _('Es werden <span class="font-semibold text-gray-900">%(start)d</span> bis <span class="font-semibold text-gray-900">%(end)d</span> von <span class="font-semibold text-gray-900 ">%(length)d</span> Einträgen angezeigt.', length=length, start=start, end=end) }}</p>
+<div class="flex">
+<div class="block h-10 mt-4">
+    <ul class="inline-flex items-center [&_a]:block -space-x-px ml-4">
+        <li>
+        <button onclick="submit_form({{ page-1 }},null)" 
+            class="flex items-baseline text-center py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+            <span class="w-5 h-5 icon-[ep--arrow-left]"></span>
+            <span class="sr-only">{{_('Vorherige Seite') }}</span>
+        </button>
+        </li>
+        {% for p in range([[0,page-5]|max,[pages-11,0]|max]|min,[[pages,page+6]|min,[11,pages]|min]|max) %}
+            <li>
+                <button onclick="submit_form({{ p }},null)" 
+                class="py-2 px-3 w-12 text-center leading-tight
+                {% if page==p %} text-blue-600 border-blue-300 hover:text-blue-700 hover:bg-blue-100 bg-blue-50 border
+                {% else %} text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700
+                {% endif %}
+                ">{{ p+1 }}</button>
+            </li>
+        {% endfor %}
+        <button onclick="submit_form({{ page+1 }},null)" 
+            class="flex items-baseline text-center py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+            <span class="sr-only">{{ _('Nächste Seite') }}</span>
+            <span class="w-5 h-5 icon-[ep--arrow-right]"></span>
+        </button>
+        </li>
+    </ul>
+</div>
+</div>
+<div class="h-full mx-4 mt-4 text-sm text-left text-black overflow-x-auto">
+    <div class="grid grid-cols-9 py-4 px-3 font-bold text-white uppercase bg-gray-800">
+        <div class="col-span-2 flex items-center text-center text-white">
+            {{ _("TITEL") }}
+            {%- if 'title.ASC' in order -%}
+            {% set id = 'title-sort-ascending' %}
+            {% set alttext =  _('Titel ansteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-top]' %}
+            {%- elif 'title.DESC' in order -%}
+            {% set id = 'title-sort-descending' %}
+            {% set alttext =  _('Titel absteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-bottom]' %}
+            {%- else -%}
+            {% set id = 'title-sort-not-set' %}
+            {% set alttext =  _('Titel unsortiert') %} 
+            {% set icon = 'icon-[ep--d-caret]' %}
+            {%- endif -%}
+            <button class="h-5" onclick="submit_form(0,'title')" alt="{{ alttext }}"><span class="h-5 {{ icon }}"></span></button>
+        </div>
+        <div class="col-span-1 flex items-center text-center">
+            {{ _("PRINT-ISSN") }}
+            {%- if 'print_issn.ASC' in order -%}
+            {% set id = 'print-issn-sort-ascending' %}
+            {% set alttext =  _('Print-ISSN ansteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-top]' %}
+            {%- elif 'print_issn.DESC' in order -%}
+            {% set id = 'print-issn-sort-descending' %}
+            {% set alttext =  _('Print-ISSN absteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-bottom]' %}
+            {%- else -%}
+            {% set id = 'print-issn-sort-not-set' %}
+            {% set alttext =  _('Print-ISSN unsortiert') %} 
+            {% set icon = 'icon-[ep--d-caret]' %}
+            {%- endif -%}
+            <button class="text-white h-5" onclick="submit_form(0,'print_issn')" alt="{{ alttext }}"><span class="h-5 {{ icon }}"></span></button>
+        </div>
+        <div class="col-span-1 flex items-center text-center">
+            {{ _("E-ISSN") }}
+            {%- if 'e_issn.ASC' in order -%}
+            {% set id = 'e-issn-sort-ascending' %}
+            {% set alttext =  _('E-ISSN ansteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-top]' %}
+            {%- elif 'e_issn.DESC' in order -%}
+            {% set id = 'e-issn-sort-descending' %}
+            {% set alttext =  _('E-ISSN absteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-bottom]' %}
+            {%- else -%}
+            {% set id = 'e-issn-sort-not-set' %}
+            {% set alttext =  _('E-ISSN unsortiert') %} 
+            {% set icon = 'icon-[ep--d-caret]' %}
+            {%- endif -%}
+            <button class="text-white h-5" onclick="submit_form(0,'e_issn')" alt="{{ alttext }}"><span class="h-5 {{ icon }}"></span></button>
+        </div>
+        <div class="col-span-1 flex items-center text-center">
+            {{ _("GÜLTIG BIS") }}
+            {%- if 'valid_till.ASC' in order -%}
+            {% set id = 'valid-till-sort-ascending' %}
+            {% set alttext =  _('Gültig bis ansteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-top]' %}
+            {%- elif 'valid_till.DESC' in order -%}
+            {% set id = 'valid-till-sort-descending' %}
+            {% set alttext =  _('Gültig bis absteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-bottom]' %}
+            {%- else -%}
+            {% set id = 'valid-till-sort-not-set' %}
+            {% set alttext =  _('Gültig bis unsortiert') %} 
+            {% set icon = 'icon-[ep--d-caret]' %}
+            {%- endif -%}
+            <button class="text-white h-5" onclick="submit_form(0,'valid_till')" alt="{{ alttext }}"><span class="h-5 {{ icon }}"></span></button>
+        </div>
+        <div class="col-span-2 flex items-center text-center">
+            {{ _("VERLAG") }}
+            {%- if 'publisher_name.ASC' in order -%}
+            {% set id = 'publisher-name-sort-ascending' %}
+            {% set alttext =  _('Verlag ansteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-top]' %}
+            {%- elif 'publisher_name.DESC' in order -%}
+            {% set id = 'publisher-name-sort-descending' %}
+            {% set alttext =  _('Verlag absteigend sortiert') %} 
+            {% set icon = 'icon-[ep--caret-bottom]' %}
+            {%- else -%}
+            {% set id = 'publisher-name-sort-not-set' %}
+            {% set alttext =  _('Verlag unsortiert') %} 
+            {% set icon = 'icon-[ep--d-caret]' %}
+            {%- endif -%}
+            <button class="text-white h-5" onclick="submit_form(0,'publisher_name')" alt="{{ alttext }}"><span class="h-5 {{ icon }}"></span></button>
+        </div>
+    </div>
+    {% for j in entries %}
+    <div class="text-black grid grid-cols-9 items-center odd:bg-gray-200 even:bg-white px-3 h-16">
+        <div hidden id="{{ j.id }}" custom_title="{{ j.title }}"></div> 
+        <div class="col-span-2">
+            {% if j.url %}
+            <a href="{{ j.url }}" target="_blank" class="highlightable underline text-blue-600 active:text-red-700">{{ j.title }}</a>
+            {% else %}
+            <span class="highlightable">{{ j.title }}</span>
+            {% endif %}
+        </div>
+        <div class="highlightable">{% if j.print_issn %}{{ j.print_issn }}{% endif %}</div>
+        <div class="highlightable">{% if j.e_issn %}{{ j.e_issn }}{% endif %}</div>
+        <div class="highlightable">{% if j.valid_till %}{{ j.valid_till }}{% endif %}</div>
+        <div class="col-span-2 highlightable">{{ j.publisher.name }}{% if j.publisher.oa_status %}{{ " (" + j.publisher.oa_status.label + ")" }}{% endif %}</div>
+
+        <div class="flex flex-col items-start">
+            <button id="b_edit_{{ j.id }}" class="flex items-center text-center  font-medium text-blue-600 hover:underline" onclick="setDialogValues({{ j.toJson() }} )"><span class="icon-[heroicons--pencil] mr-2"></span>{{ gettext("Bearbeiten") }}</button>
+            <button class="flex items-center text-center font-medium text-red-700 hover:underline" onclick="delete_journal({{ j.id }})"><span class="icon-[heroicons--trash] mr-2"></span>{{ _("Löschen") }}</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="m-4 font-semibold">{{ _('Keine Einträge gefunden.') }}</p>
+{% endif %}
+
+
+<!-- modal -->
+<div id="journal-modal" tabindex="-1" aria-hidden="true" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-scroll overflow-y-scroll md:inset-0 h-modal md:h-full">
+    <div class="relative w-full h-full max-w-4xl md:h-full">
+        <!-- Modal content -->
+        <div class="relative bg-white rounded-lg shadow-sm">
+            <button type="button" onclick="hideModal();" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                <span class="w-5 h-5 icon-[ep--close]"></span>
+                <span class="sr-only">{{ _('Schließen') }}</span>
+            </button>
+            <div class="px-6 py-6 lg:px-8 space-y-6">
+                <div>
+                    <label for="dlg_j_id" class="hidden mb-2 text-sm font-medium text-gray-900">{{ _("Id") }}</label>
+                    <input type="text" name="id" id="dlg_j_id" class="hidden bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" required>
+                </div>
+                <div>
+                    <label for="dlg_j_title" class="block mb-2 text-sm font-medium text-gray-900">{{ _("Titel") }}</label>
+                    <input type="text" name="title" id="dlg_j_title" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="dlg_j_url" class="block mb-2 text-sm font-medium text-gray-900">{{ _("URL") }}</label>
+                    <input type="text" name="url" id="dlg_j_url" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="dlg_j_print_issn" class="block mb-2 text-sm font-medium text-gray-900">{{ _("Print-ISSN") }}</label>
+                    <input type="text" name="print_issn" id="dlg_j_print_issn" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="dlg_j_e_issn" class="block mb-2 text-sm font-medium text-gray-900">{{ _("E-ISSN") }}</label>
+                    <input type="text" name="e_issn" id="dlg_j_e_issn" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                </div>
+                <div>
+                    <label for="dlg_j_valid_till" class="block mb-2 text-sm font-medium text-gray-900">{{ _("Gültig bis") }}</label>
+                    <input type="date" name="valid_till" id="dlg_j_valid_till" required ="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                </div>
+                <button onclick="save_journal()" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Speichern</button>
+            </div>
+        </div>
+    </div>
+</div> 
+
+{% endblock content %}
+{% block additional %}
+<script>
+$(document).ready()
+{
+    {% if keyword %}        
+    $(".highlightable").each(function () { $(this).get(0).innerHTML = highlight($(this).get(0).innerText, '{{ keyword }}'); });
+    {% endif %}
+}
+
+function hideModal() { $('#journal-modal').hide(); }
+function showModal() { $('#journal-modal').show(); }
+
+function setDialogValues(j)
+{
+    showModal();
+
+    var x;
+    if (j == null)
+    {
+        j={id:-1};
+    }
+    x=document.getElementById('dlg_j_id')
+    x.value=j.id 
+    x.placeholder=j.id;
+    x=document.getElementById('dlg_j_title');        
+    x.value=(j.title) ? j.title : '';
+    x.placeholder=(j.title) ? j.title : "{{ _('Titel') }}";
+    x=document.getElementById('dlg_j_url');        
+    x.value=(j.url) ? j.url : '';
+    x.placeholder=(j.url) ? j.url : "{{ _('URL') }}";
+    x=document.getElementById('dlg_j_print_issn');        
+    x.value=(j.print_issn) ? j.print_issn : '';
+    x.placeholder=(j.print_issn) ? j.print_issn : "{{ _('Print-ISSN') }}";
+    x=document.getElementById('dlg_j_e_issn');        
+    x.value=(j.e_issn) ? j.e_issn : '';
+    x.placeholder=(j.e_issn) ? j.e_issn : "{{ _('E-ISSN') }}";
+    x=document.getElementById('dlg_j_valid_till');        
+    x.value=(j.valid_till) ? j.valid_till : '';
+    x.placeholder=(j.valid_till) ? j.valid_till : "{{ _('Gültig bis') }}";
+}
+
+function save_journal()
+{
+    url = {{ url_for("admin_save_journal")|tojson }};
+    form = $('<form>', {
+            'action': url,
+            'method': 'post'
+    });
+    form.append($('<input>', {
+        'name': 'id',
+        'value': $('#dlg_j_id').val()
+    }));
+    form.append($('<input>', {
+        'name': 'title',
+        'value': $('#dlg_j_title').val()
+    }));
+    form.append($('<input>', {
+        'name': 'url',
+        'value': $('#dlg_j_url').val()
+    }));
+    form.append($('<input>', {
+        'name': 'print_issn',
+        'value': $('#dlg_j_print_issn').val()
+    }));
+    form.append($('<input>', {
+        'name': 'e_issn',
+        'value': $('#dlg_j_e_issn').val()
+    }));
+    form.append($('<input>', {
+        'name': 'valid_till',
+        'value': $('#dlg_j_valid_till').val()
+    }));
+    addSearchParamsToForm(form);
+    form.appendTo('body');
+    form.submit();
+}
+
+function delete_journal(id) 
+{
+    if (confirm("{{ _('Möchten Sie die folgende Zeitschrift löschen?') }}" + "\n" + document.getElementById(id).getAttribute("custom_title"))) 
+    {
+        url = {{ url_for("admin_delete_journal")|tojson }};
+        form = $('<form>', {
+                    'action': url,
+                    'method': 'post'
+            });
+        form.append($('<input>', {
+            'name': 'journal_id_to_delete',
+            'value': id
+        }));
+        addSearchParamsToForm(form);
+        form.appendTo('body');
+        form.submit();
+    }
+}
+
+function addSearchParamsToForm(form)
+{
+    form.append($('<input>', {
+        'name': 'keyword',
+        'value': $('#keyword').val()
+    }));
+    form.append($('<input>', {
+        'name': 'publisher',
+        'value': $('#publisher').val()
+    }));
+    form.append($('<input>', {
+        'name': 'order',
+        'value': $('#order').val()
+    }));
+    form.append($('<input>', {
+        'name': 'only_active',
+        'value': $('#only_active').val()
+    }));
+}
+
+function submit_form(page=null,sort_toggle=null)
+{
+    if (page !== null) { $("#input_page").val(page); }
+    if (sort_toggle !== null) { $("#sort_toggle").val(sort_toggle); }
+    $("#submit_action").val("search");
+    $("#search_form").submit();        
+}
+
+</script>
+{% endblock additional %}

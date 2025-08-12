@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}
+Admin - Delete
+{% endblock title %}
+
+{% block content %}
+<div class="mt-4 ml-4">
+Löschen von Journals mittels xlsx-Files. Die Löschung basiert auf den Inhalten der Zellen der ersten Spalte und beziehen sich entweder auf E-ISSNs (Spaltenkopf E-ISSN) oder die Ids (Spaltenkopf Id)
+der vorhandenen Journals. Die Ids sind via Excel-Download im Journal-Admin-Interface eruierbar.
+</div>
+<br>
+<form class="mx-4" method="post" enctype="multipart/form-data">
+    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300" for="excel">Datei hochladen</label>
+    <input class="mb-6 block w-full max-w-lg text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-hidden" type="file" name="excel" id="excel" required>
+    <input class="text-white bg-[#069] hover:bg-[#005580] cursor-pointer focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center" type="submit" value="Hochladen">
+</form>
+{% endblock content %}

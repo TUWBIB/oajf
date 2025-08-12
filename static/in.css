@@ -1,0 +1,409 @@
+@import 'tailwindcss';
+
+@plugin "@iconify/tailwind4";
+
+@theme {
+	--breakpoint-*: initial;
+	--breakpoint-sm: 450px;
+	--breakpoint-zz: 690px;
+	--breakpoint-md: 750px;
+	--breakpoint-lg: 1440px;
+
+	--font-*: initial;
+	--font-roboto: Roboto;
+	--font-pt-sans: 'PT Sans';
+
+	--spacing-oajf-header: 70px;
+	--color-oajf-1: #069;
+	--color-oajf-text-bg: #f6f6f6;
+	--color-oajf-blue-1: #5485ab;
+	--color-oajf-blue-2: #72add5;
+	--color-oajf-blue-3: #a6d5ec;
+	--color-oajf-blue-4: #dff2fd;
+	--color-oajf-gray-1: #646363;
+	--color-oajf-gray-2: #9d9d9c;
+	--color-oajf-gray-3: #d0d0d0;
+	--color-oajf-gray-4: #ededed;
+	--color-oajf-green-1: #007e71;
+	--color-oajf-green-2: #6aaaa5;
+	--color-oajf-green-3: #a2c6c2;
+	--color-oajf-green-4: #e9f1f0;
+	--color-oajf-magenta-1: #ba4682;
+	--color-oajf-magenta-2: #cd81a8;
+	--color-oajf-magenta-3: #dfafca;
+	--color-oajf-magenta-4: #f5e5ef;
+	--color-oajf-yellow-1: #e18922;
+	--color-oajf-yellow-2: #eeb473;
+	--color-oajf-yellow-3: #f5d0a8;
+	--color-oajf-yellow-4: #fdefe1;
+}
+
+@utility inherit {
+    display: inherit;
+}
+
+@utility oajf-table-heading {
+	background-color: #487ca0;
+	color: #ffffff;
+	font-family: 'PT Sans';
+	font-size: 22px;
+	line-height: 44px;
+	font-weight: 700;
+}
+
+@utility oajf-textstyle-heading-1 {
+	font-family: 'PT Sans';
+	font-size: 42px;
+	color: #006699;
+	line-height: 56px;
+	font-weight: 700;
+}
+
+@utility oajf-textstyle-heading-2 {
+	font-family: 'PT Sans';
+	font-size: 32px;
+	color: #006699;
+	line-height: 44px;
+	font-weight: 700;
+}
+
+@utility oajf-textstyle-text {
+	font-family: 'Roboto';
+	font-size: 17px;
+	color: #000000;
+	line-height: 30px;
+	font-weight: 300;
+	letter-spacing: 0.51px;
+}
+
+@utility oajf-textstyle-link {
+	font-family: 'Roboto';
+	font-size: 17px;
+	color: #676767;
+	line-height: 30px;
+	font-weight: 300;
+	letter-spacing: 0.51px;
+	text-decoration: underline;
+}
+
+@utility oajf-textstyle-text-small-bold {
+	font-family: 'Roboto';
+	font-size: 15px;
+	color: #000000;
+	line-height: 20px;
+	font-weight: 700;
+	letter-spacing: 0.51px;
+}
+
+@utility oajf-textstyle-text-small {
+	font-family: 'Roboto';
+	font-size: 15x;
+	color: #000000;
+	line-height: 20px;
+	font-weight: 300;
+	letter-spacing: 0.51px;
+}
+
+@utility oajf-textstyle-small-link {
+	font-family: 'Roboto';
+	font-size: 15px;
+	color: #676767;
+	line-height: 20px;
+	font-weight: 300;
+	letter-spacing: 0.51px;
+	text-decoration: underline;
+}
+
+@utility oajf-textstyle-heading-4 {
+	font-family: 'PT Sans';
+	font-size: 19px;
+	color: #000000;
+	line-height: 30px;
+	font-weight: 700;
+}
+
+@utility oajf-textstyle-heading-link {
+	font-family: 'PT Sans';
+	font-size: 19px;
+	color: #676767;
+	line-height: 30px;
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+
+
+/*
+The default border color has changed to `currentcolor` in Tailwind CSS v4,
+so we've added these compatibility styles to make sure everything still
+looks the same as it did with Tailwind CSS v3.
+
+If we ever want to remove these styles, we need to add an explicit border
+color utility to any element that depends on these defaults.
+*/
+@layer base {
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentcolor);
+	}
+}
+
+@layer base {
+	@font-face {
+			font-family: 'Roboto';
+			src: url('./fonts/Roboto-Bold-webfont.woff');
+			font-weight: 700;
+			font-style: normal;
+	}
+
+	@font-face {
+			font-family: 'Roboto';
+			src: url('./fonts/Roboto-Regular-webfont.woff');
+			font-weight: 400;
+			font-style: normal;
+	}
+
+	@font-face {
+			font-family: 'Roboto';
+			src: url('./fonts/Roboto-Light-webfont.woff');
+			font-weight: 300;
+			font-style: normal;
+	}
+
+	@font-face {
+			font-family: "PT Sans";
+			font-weight: 400;
+			font-style: normal;
+			src: url('./fonts/PTSans-Regular.ttf');    
+	}
+
+	@font-face {
+			font-family: "PT Sans";
+			font-weight: 700;
+			font-style: normal;
+			src: url('./fonts/PTSans-Bold.ttf');    
+	}
+
+	@font-face {
+			font-family: "PT Sans";
+			font-weight: 400;
+			font-style: italic;
+			src: url('./fonts/PTSans-Italic.ttf');    
+	}
+
+	@font-face {
+			font-family: "PT Sans";
+			font-weight: 700;
+			font-style: italic;
+			src: url('./fonts/PTSans-BoldItalic.ttf');
+	}
+}
+
+
+
+@layer base {
+	a.accbodycontent {
+			@apply oajf-textstyle-small-link
+	}
+	.accbodycontent > ul {
+			@apply list-decimal ml-4
+	}
+
+	.accbodycontent {
+			@apply oajf-textstyle-text-small
+	} 
+
+	.accbodyheader {
+			@apply oajf-textstyle-text-small-bold
+	}
+
+	.accordion-more {
+			@apply oajf-textstyle-link
+	}
+
+	.accheader {
+			@apply oajf-textstyle-heading-4 
+	}
+
+	.accheader a {
+			@apply oajf-textstyle-heading-link
+	}
+
+	details > summary {
+			list-style: none;
+		}
+	details > summary::-webkit-details-marker { display: none; }
+
+	details .lastcol::after {
+			content: "+";
+			margin-left: 15px;
+	}
+
+	details[open] .lastcol::after {
+			content: "-";
+			margin-left: 15px;
+	}
+}
+
+.contentpage {
+	@apply ml-4 mr-4 mt-8 bg-oajf-text-bg;
+}
+
+.logo-left {
+	@apply w-auto h-[60px] ml-3;
+}
+
+.logo-right {
+	@apply h-[60px] w-[60px] md:h-[75px] md:w-[75px] lg:h-[95px] lg:w-[95px];
+	@apply hover:cursor-pointer hover:rounded-lg hover:border hover:border-[#006699] hover:ring-4 hover:ring-blue-300;
+	@apply focus:outline-hidden focus:rounded-lg focus:border focus:border-[#006699] focus:ring-4 focus:ring-blue-300;
+}
+
+
+.maintenance-message {
+	@apply mt-8 flex w-full h-16 bg-yellow-200 text-black items-center text-center justify-center;
+}
+
+
+/* sidebar */
+.drawer {
+		display: none;
+}
+
+.drawer__overlay {
+	position: fixed;
+	top: 0px;
+	right: 0;
+	bottom: 0;
+	left: 300px;
+	width: 100%;
+	z-index: 200;
+	opacity: 1;
+	
+	transition: opacity 0.3s;
+	will-change: opacity;
+	background-color: #000;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;      
+}
+
+
+.drawer__wrapper {
+	position: fixed;
+	top:0;
+	right: 0;
+	bottom: 0;
+	height: 100%;
+	width: 100%;
+	max-width: 300px;
+	z-index: 140;
+	overflow: auto;
+	transition: transform 0.3s;
+	will-change: transform;
+	background-color: #fff;
+	display: flex;
+	flex-direction: column; 
+	-webkit-transform: translate3d(103%, 0, 0);
+	transform: translate3d(103%, 0, 0);
+	-webkit-overflow-scrolling: touch;
+}
+
+.drawer__content {
+	position: relative;
+	overflow-x: hidden;
+	overflow-y: auto;
+	height: 100%;
+	flex-grow: 1;
+	background-color: #141414;    
+	top: 70px;
+}
+
+.drawer--left .drawer__wrapper {
+	left: 0;
+	right: auto;
+	-webkit-transform: translate3d(-100%, 0, 0);
+	transform: translate3d(-100%, 0, 0);
+}
+
+.drawer.is-active {
+	display: block;
+}
+
+.drawer.is-visible .drawer__wrapper {
+	-webkit-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+}
+
+.drawer.is-visible .drawer__overlay {
+	opacity: 0.5;
+}
+
+
+/* language toggle */
+
+.toggleContainer {
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	width: fit-content;
+	border: 3px solid #084f72;
+	border-radius: 20px;
+	background: #084f72;
+	font-weight: bold;
+	color: #084f72;
+	cursor: pointer;
+}
+
+.toggleContainer::before {
+	content: '';
+	position: absolute;
+	width: 50%;
+	height: 100%;
+	left: 0%;
+	border-radius:20px;
+	background: white;
+	transition: all 0.3s;
+}
+
+.toggleCheckbox:checked + .toggleContainer::before {
+	left: 50%;
+}
+
+.toggleContainer div {
+	padding: 4px 4px 4px 4px;
+	text-align: center;
+	z-index: 1;
+}
+
+.toggleCheckbox {
+	display: none;
+}
+
+.toggleCheckbox:checked + .toggleContainer span:first-child {
+	color: white;
+	transition: color 0.3s;
+}
+
+.toggleCheckbox:checked + .toggleContainer span:last-child {
+	color: #084f72;
+	transition: color 0.3s;
+}
+
+.toggleCheckbox + .toggleContainer span:first-child {
+	color: #084f72;
+	transition: color 0.3s;
+}
+
+.toggleCheckbox + .toggleContainer span:last-child {
+	color: white;
+	transition: color 0.3s;
+}
+
+
+

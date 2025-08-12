@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}
+Admin - DOAJ - Withdrawn
+{% endblock title %}
+
+{% block content %}
+{% if l_journal %}
+<div class="flex items-center mt-4">
+<input type="button" id="b_reset" value="{{ gettext('DOAJ-Verlinkung berücksichtigen (Default)') }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="calcEntries(0);"/>
+<input type="button" id="b_ignore_doaj_linking" value="{{ gettext('DOAJ-Verlinkung ignorieren') }}" class="text-white ml-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="calcEntries(1);"/>
+<input type="button" id="b_set_all" value="{{ gettext('Alle markieren') }}" class="text-white ml-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="setChecked(1);"/>
+<input type="button" id="b_set_none" value="{{ gettext('Keine markieren') }}" class="text-white ml-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="setChecked(0);"/>
+</div>
+<input type="button" id="b_ignore_doaj_linking" value="{{ gettext('markierte Zeitschriften löschen') }}" class="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="deleteSelected();"/>
+
+<div class="overflow-x-auto relative shadow-md sm:rounded-lg w-full m-4">
+<div class="w-full text-sm text-left text-gray-500">
+<div class="grid grid-cols-10 py-4 px-3 gap-x-2 text-xs font-bold text-white uppercase justify-items-start items-center bg-gray-800">
+    <div class="col-span-2">{{ gettext("Title") }}</div>
+    <div class="col-span-1">{{ gettext("E-ISSN") }}</div>
+    <div class="col-span-1">{{ gettext("Print-ISSN") }}</div>
+    <div class="col-span-2">{{ gettext("Verlag") }}</div>
+    <div class="col-span-2">{{ gettext("DOAJ-Löschgrund") }}</div>
+    <div class="col-span-1">{{ gettext("DOAJ-Löschdatum") }}</div>
+    <div class="col-span-1">{{ gettext("wird gelöscht") }}</div>
+</div>
+{% for j in l_journal %}
+    <div id="{{ j.id }}" is_doaj="{{ j.is_doaj }}" doaj_linked="{{ j.doaj_linked}}" class="entry grid grid-cols-10 px-3 gap-x-2 break-all text-xs font-bold text-black justify-items-start items-center odd:bg-gray-200 even:bg-white h-16">
+        <div class="col-span-2 break-words">
+            {% if j.url %}
+            <a class="underline" href="{{ j.url }}">{{ j.title }}</a>
+            {% else %}
+            {{ j.title }}
+            {% endif %}
+        </div>
+        <div class="col-span-1">{{ j.e_issn }}</div>
+        <div class="col-span-1">{{ j.print_issn }}</div>
+        <div class="col-span-2">{{ j.publisher.name }}</div>
+        <div class="col-span-2 break-words">{{ j.withdraw_reason }}</div>
+        <div class="col-span-1">{{ j.withdraw_date}}</div>
+        <div class="col-span-1"><input id="cb-{{ j.id }}" autocomplete="off" type="checkbox" {% if j.to_be_deleted == 1 %} checked {% endif %}/></div> 
+    </div>    
+{% endfor %}
+</div>
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block additional %}
+<script>
+function calcEntries(ignore_doaj_linking)
+{
+    console.log("foo");
+    $('.entry').each(function(i,e)
+    {
+        var id = $(this).attr('id');
+        var is_doaj = $(this).attr('is_doaj');
+        var doaj_linked = $(this).attr('doaj_linked');
+        var cb = $(this).find("#cb-"+id).first();
+        console.log(id + " " + is_doaj + " " + doaj_linked);
+        console.log(cb);
+        if ((ignore_doaj_linking == 0 && (is_doaj == 1 || doaj_linked == 1)) ||
+            (ignore_doaj_linking == 1)
+            )
+        {   
+            cb.prop("checked",true);
+        }
+        else
+        {
+            cb.prop("checked",false);
+        }
+    });
+}
+
+
+function deleteSelected()
+{
+    var a = []
+    $('.entry').each(function(i,e)
+    {
+        var id = $(this).attr('id');
+        var cb = $(this).find("#cb-"+id).first();
+
+        if (cb.prop('checked'))
+        {
+            a.push(id);
+        }
+    });
+
+    if (confirm(a.length + " {{ _('Zeitschriften werden gelöscht. Sind Sie sicher?') }}")) 
+    {
+        const url = {{ url_for("doaj_withdrawn")|tojson }};
+        $('<form/>', { action: url, method: 'POST' }).append(
+            $('<input>', {type: 'hidden', id: 'ids', name: 'ids', value: a}),
+        ).appendTo('body').submit();
+    }
+}
+
+function setChecked(checked)
+{
+    $('.entry').each(function(i,e)
+    {
+        var id = $(this).attr('id');
+        var cb = $(this).find("#cb-"+id).first();
+
+        if (checked == 1)
+        {
+            cb.prop("checked", true);
+        }
+        else
+        {
+            cb.prop("checked", false);
+        }
+    });
+}
+</script>
+{% endblock additional %}
+
+

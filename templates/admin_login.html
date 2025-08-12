@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}
+Admin
+{% endblock title %}
+
+{% block content %}
+
+<div class="max-w-sm mx-auto mt-40 bg-gray-100 p-10 rounded-lg shadow-xl">
+    <form method="post" class="grid grid-cols-1 gap-y-5 justify-items-center content-center items-stretch">
+        <label for="uid">{{ gettext("Benutzername:") }}</label>
+        <input type="text" name="uid" id="uid" class="border border-black border-solid rounded-md px-2 h-10 w-full" required>
+        <label for="password">{{ gettext("Passwort:") }}</label>
+        <input type="password" name="password" id="password" class="border border-black border-solid rounded-md px-2 h-10 w-full" required>
+        <input type="submit" value="Login" class="h-10 w-full bg-[#069] rounded-md text-white hover:bg-[#005580] hover:cursor-pointer">
+    </form>
+</div>
+
+{% endblock content %}

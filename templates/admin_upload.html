@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}
+Admin - Import
+{% endblock title %}
+
+{% block content %}
+<p>
+<br>
+<h1 class="mt-4 ml-4">{{ _('Excel xlsx-Files mit den folgenden Spaltenköpfen können importiert werden') }}</h1>
+<ol class="mt-4 ml-8 text-sm font-medium text-gray-900 list-decimal">
+    <li>Title</li>
+    <li>Link</li>
+    <li>E-ISSN</li>
+    <li>Print-ISSN</li>
+</ol>
+<p></p>
+<br>
+<form class="mx-4" method="post" enctype="multipart/form-data">
+    <label class="block mb-2 text-sm font-medium text-gray-900" for="excel">{{ _('Datei hochladen') }}</label>
+    <input class="mb-6 block w-full max-w-lg text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointer focus:outline-hidden" type="file" name="excel" id="excel" required>
+    <label class="block mb-2 text-sm font-medium text-gray-900" for="valid">{{ _('Gültigkeitsende auswählen') }}</label>
+    <input class="mb-6 block w-full max-w-lg text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 cursor-pointe focus:outline-hidden" type="date" name="valid" id="valid" required {% if valid %} value="{{ valid }}" {% endif %}>
+    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400" for="publisher">{{ _('Verlag auswählen') }}</label>
+    <select class="mb-6 max-w-lg bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" name="publisher" id="publisher" required>
+        {% for p in g.publishers %}
+        <option value="{{ p.id }}" {% if publisher and publisher.id == p.id %} selected{% endif %}>{{ p.name }}{% if p.oa_status %}{{ " (" + p.oa_status.label + ")" }}{% endif %}</option>
+        {% endfor %}
+    </select>
+    <div class="flex items-center mb-6">
+        <input class="" type="checkbox" name="delete_journals" id="delete_journals" {% if delete_journals is undefined or delete_journals %} checked {% endif %}>
+        <label class="ml-2 text-sm font-medium text-gray-90" for="delete_journals">{{ _('Vorhandene Journals des Verlags löschen') }}</label>
+    </div>    
+    <input class="text-white bg-[#069] hover:bg-[#005580] cursor-pointer focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="submit" value="{{ _('Hochladen') }}">
+</form>
+{% endblock content %}

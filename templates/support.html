@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{%- block titlehead -%}
+{% with pagetitle = getSettingValueLang('pagetitle_legal',CURRENT_LOCALE) %}
+{% if pagetitle %}
+{{ pagetitle | safe }}
+{% endif %}
+{% endwith %}
+{%- endblock -%}
+{% block content %}
+<div class="contentpage">
+{% with content = getSettingValueLang('text_support',CURRENT_LOCALE) %}
+{% if content %}
+{{ content | safe }}
+{% endif %}
+{% endwith %}
+</div>
+{% endblock %}    

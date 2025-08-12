@@ -1,0 +1,97 @@
+{% macro left() %}
+{% endmacro %}
+
+{% macro middle() %}
+{% endmacro %}
+
+{% macro right() %}
+{% endmacro %}
+
+
+
+<header class="flex w-full bg-white fixed h-oajf-header z-20 top-0 left-0">
+{% if header_mode == 'regular' %}
+<div class="flex h-oajf-header w-[300px]">
+    {% if 'uid' in session %}
+    <div class="flex w-1/3 justify-center items-center bg-oajf-1 hover:bg-blue-400 focus-within:bg-blue-400 text-white h-oajf-header">
+        <button type="button" class="block text-white p-2.5 mr-0 outline-hidden"
+            data-drawer-trigger 
+            aria-controls="drawer-name-left" aria-expanded="false">
+            <span class="w-7 h-7 icon-[heroicons--bars-3-16-solid]"></span>            
+        </button>
+    </div>
+    <div class="flex items-center bg-oajf-1">
+        <span class="w-0 h-3/4 border-l border-r"></span>
+    </div>
+    {% endif %}
+    <div class="flex justify-center items-center {% if 'uid' in session %}w-1/3{% else %}w-1/2{% endif %} h-oajf-header px-2 bg-oajf-1 text-white hover:bg-blue-400 focus-within:bg-blue-400">            
+        <a href="{{ url_for('index') }}"><span class="h-7 w-7 icon-[heroicons--home] alt="Home"></span></a>
+    </div>
+    <div class="flex items-center bg-oajf-1">
+        <span class="w-0 h-3/4 border-l border-r"></span>
+    </div>
+    <div class="flex justify-center items-center {% if 'uid' in session %}w-1/3{% else %}w-1/2{% endif %} h-oajf-header px-2 bg-oajf-1 text-white hover:bg-blue-400 focus-within:bg-blue-400">            
+    <input type="checkbox" id="langtoggle_1" class="toggleCheckbox"
+        {% if CURRENT_LOCALE == 'de' %}
+        onchange="window.location.href='{{ url_for('set_locale', language='en',path=request.endpoint) }}'"
+        {% else %}
+        checked 
+        onchange="window.location.href='{{ url_for('set_locale', language='de',path=request.endpoint) }}'"
+        {% endif %}
+    >
+    <label for="langtoggle_1" class='toggleContainer'>
+        <span class="text-xs font-bold">{% if CURRENT_LOCALE == 'en' %}DE{% endif %}</span>   
+        <span class="text-xs font-bold">{% if CURRENT_LOCALE == 'de' %}EN{% endif %}</span>
+    </label>
+    </div>
+</div>    
+<div class="bg-white hidden md:flex shrink-0 grow w-auto h-oajf-header items-center">
+    <a href="{{ UI['logo_left_url'] }}">
+        <img class="logo-left" src="{{ url_for('static',filename=UI['logo_left']) }}" alt="{{ UI['logo_left_alt'][CURRENT_LOCALE] }}">
+    </a>
+</div>
+<div class="flex relative justify-end ml-[15px] md:mr-[15px] md:mt-[15px] z-50 shrink-0 grow-0">
+    <a href="{{ UI['logo_right_url'] }}">
+        <img class="logo-right" src="{{ url_for('static',filename=UI['logo_right']) }}" alt="{{ UI['logo_right_alt'][CURRENT_LOCALE] }}"">    
+    </a>
+</div>
+
+
+{% elif header_mode == 'drawer' %}
+<div class="flex h-oajf-header w-[300px]">
+{% if 'uid' in session %}
+<div class="flex w-1/3 justify-center items-center bg-oajf-1 hover:bg-blue-400 focus-within:bg-blue-400 text-white h-oajf-header">
+    <button type="button" class="block text-white mx-12 outline-hidden"
+            data-drawer-close
+            aria-controls="drawer-name-left" aria-expanded="false">
+            <span class="w-7 h-7 icon-[heroicons--x-mark]"></span>
+    </button>
+</div>
+<div class="flex items-center bg-oajf-1">
+    <span class="w-0 h-3/4 border-l border-r"></span>
+</div>
+{% endif %}
+<div class="flex justify-center items-center {% if 'uid' in session %}w-1/3{% else %}w-1/2{% endif %} h-oajf-header px-2 bg-oajf-1 text-white hover:bg-blue-400 focus-within:bg-blue-400">            
+    <a href="{{ url_for('index') }}"><span class="w-7 h-7 icon-[heroicons--home] alt="Home"></span></a>
+</div>
+<div class="flex items-center bg-oajf-1">
+    <span class="w-0 h-3/4 border-l border-r"></span>
+</div>
+<div class="flex items-center justify-center {% if 'uid' in session %}w-1/3{% else %}w-1/2{% endif %} h-oajf-header px-2 bg-oajf-1 text-white hover:bg-blue-400 focus-within:bg-blue-400">
+    <input type="checkbox" id="langtoggle_2" class="toggleCheckbox"
+    {% if CURRENT_LOCALE == 'de' %}
+    onchange="window.location.href='{{ url_for('set_locale', language='en',path=request.endpoint) }}'"
+    {% else %}
+    checked 
+    onchange="window.location.href='{{ url_for('set_locale', language='de',path=request.endpoint) }}'"
+    {% endif %}
+    >
+    <label for="langtoggle_2" class='toggleContainer'>
+        <span class="text-xs font-bold">{% if CURRENT_LOCALE == 'en' %}DE{% endif %}</span>   
+        <span class="text-xs font-bold">{% if CURRENT_LOCALE == 'de' %}EN{% endif %}</span>
+    </label>
+</div>
+</div>
+{% endif %}
+
+</header>

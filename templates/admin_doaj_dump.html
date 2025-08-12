@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% block title %}
+Admin - DOAJ - Withdrawn
+{% endblock title %}
+
+{% block content %}
+{% if l_new or l_updated %}
+<div class="mb-4 border-b border-gray-200">
+    <ul class="flex flex-wrap -mb-px text-sm font-medium text-center">
+        {% if l_new %}
+        <li class="tab mr-2" role="presentation">
+            <button id="tab1" class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300" type="button">Neue Journals</button>
+        </li>
+        {% endif %}
+        {% if l_updated %}
+        <li class="tab mr-2" role="presentation">
+            <button id="tab2" class="inline-block p-4 border-b-2 rounded-t-lg  hover:text-gray-600 hover:border-gray-300" type="button">Aktualisierte Journals</button>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+{% endif %}
+{% if l_new %}
+<div id="tab1C" class="tab-container">
+<div class="flex items-center mt-4">
+<input type="button" id="b_import_set_all" value="{{ gettext('Alle markieren') }}" class="text-white ml-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="import_setChecked(1);"/>
+<input type="button" id="b_import_set_none" value="{{ gettext('Keine markieren') }}" class="text-white ml-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="import_setChecked(0);"/>
+</div>
+<input type="button" id="b_import" value="{{ gettext('markierte Zeitschriften importieren') }}" class="mt-4 ml-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="import_importSelected();"/>
+
+<div class="overflow-x-auto relative shadow-md sm:rounded-lg w-full m-4">
+<div class="w-full text-sm text-left text-gray-500">
+<div class="grid grid-cols-10 py-4 px-3 gap-x-2 text-xs font-bold text-white uppercase justify-items-start items-center bg-gray-800">
+    <div class="col-span-2 flex items-center text-center">{{ gettext("Title") }}</div>
+    <div class="col-span-1">{{ gettext("E-ISSN") }}</div>
+    <div class="col-span-1">{{ gettext("Print-ISSN") }}</div>
+    <div class="col-span-1">{{ gettext("Import") }}</div>
+    <div class="col-span-1"></div>
+</div>
+{% for j in l_new %}
+    <div class="import-entry grid grid-cols-10 gap-x-2 break-all text-xs font-bold text-black justify-items-start items-center odd:bg-gray-200 even:bg-white h-16">
+        <div class="data-title col-span-2">
+            {% if j.url %}
+            <a class="underline" href="{{ j.url }}">{{ j.title }}</a>
+            {% else %}
+            {{ j.title }}
+            {% endif %}
+        </div>
+        <div class="data-e_issn col-span-1">{{ j.e_issn }}</div>
+        <div class="data-print_issn col-span-1">{{ j.print_issn }}</div>
+        <div class="data-url hidden">{{ j.url }}</div>
+        <div class="col-span-1"><input autocomplete="off" type="checkbox" checked></div> 
+        <div class="col-span-1"></div>
+    </div>    
+{% endfor %}
+</div>
+</div>
+</div>
+{% endif %}
+
+{% if l_updated %}
+<div id="tab2C" class="tab-container hidden">
+<div class="flex items-center mt-4">
+<input type="button" id="b_update_set_all" value="{{ gettext('Alle markieren') }}" class="text-white ml-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="update_setChecked(1);"/>
+<input type="button" id="b_update_set_none" value="{{ gettext('Keine markieren') }}" class="text-white ml-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="update_setChecked(0);"/>
+</div>
+<input type="button" id="b_import" value="{{ gettext('markierte Zeitschriften aktualisieren') }}" class="mt-4 ml-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" onclick="update_updateSelected();"/>
+
+<div class="overflow-x-auto relative shadow-md sm:rounded-lg w-full m-4">
+<div class="w-full text-sm text-left text-gray-500">
+<div class="grid grid-cols-9 py-4 px-3 gap-x-2 text-xs font-bold text-white uppercase justify-items-start items-center bg-gray-800">
+    <div class="col-span-2 flex items-center text-center">{{ gettext("Title") }}</div>
+    <div class="col-span-1">{{ gettext("E-ISSN") }}</div>
+    <div class="col-span-1">{{ gettext("Print-ISSN") }}</div>
+    <div class="col-span-2">{{ gettext("Diffs") }}</div>
+    <div class="col-span-1">{{ gettext("Update") }}</div>
+    <div class="col-span-1"></div>
+</div>
+{% for j in l_updated %}
+    <div class="update-entry grid grid-cols-9 gap-x-2 break-all text-xs font-bold text-black justify-items-start items-center odd:bg-gray-200 even:bg-white h-16">
+        <div class="data-id col-span-1 hidden">{{ j.id }}</div>
+        <div class="data-title col-span-2">
+            {% if j.url %}
+            <a class="underline" href="{{ j.url }}">{{ j.title }}</a>
+            {% else %}
+            {{ j.title }}
+            {% endif %}
+        </div>
+        <div class="data-e_issn col-span-1">{{ j.e_issn }}</div>
+        <div class="data-print_issn col-span-1">{{ j.print_issn }}</div>
+        <div class="data-url hidden">{{ j.url }}</div>
+        <div class="col-span-2">
+            {% for k,v in j.diffs.items() %}
+            <span class="lowercase text-blue-900">{{ k }}:</span> {{ v[1] }} &gt;&gt;&gt; {{ v[0] }} <br>
+            {% endfor %}
+        </div>
+        <div class="col-span-1"><input autocomplete="off" type="checkbox" checked></div> 
+        <div class="col-span-1"></div>
+    </div>    
+{% endfor %}
+</div>
+</div>
+</div>
+{% endif %}
+
+{% endblock content %}
+
+{% block additional %}
+<script>
+$(document).ready(function() 
+{
+    $('.tab button').click(function()
+    {
+        var t = $(this).attr('id');
+        $('.tab-container').hide();
+        $('#'+ t + 'C').show();
+    })
+});
+
+function import_importSelected()
+{
+    var l = []
+    $('.import-entry').each(function(i,e)
+    {
+        var cb = $(this).find("input").first();
+
+        if (cb.prop('checked'))
+        {
+            var title = $(this).find(".data-title").first().text();
+            var e_issn = $(this).find(".data-e_issn").first().text();
+            var print_issn = $(this).find(".data-print_issn").first().text();
+            var url = $(this).find(".data-url").first().text();
+
+            l.push(
+                {
+                    "title": title,
+                    "e_issn": e_issn,
+                    "print_issn": print_issn,
+                    "url": url
+                }
+            );
+        }
+    });
+
+    data = {
+            "action": "import",
+            "journals": l
+        };
+
+    if (confirm(l.length + " {{ _('Zeitschriften werden importiert. Sind Sie sicher?') }}")) 
+    {
+        const url = {{ url_for("doaj_import_update")|tojson }};
+        var json = JSON.stringify(data);
+
+        $('<form/>', 
+            { action: url, method: 'POST' }).append(
+            $('<input>', 
+            {type: 'hidden', 
+            id: 'data_as_json',
+            name: 'data_as_json',
+            value: json}),
+        ).appendTo('body').submit();
+    }
+}
+
+function import_setChecked(checked) {
+    $('.import-entry').each(function(i,e) {
+        var $cb = $(this).find("input").first();
+        $cb.prop("checked", checked == 1 ? true : false);
+    });
+}
+
+function update_updateSelected() {
+    var l = []
+    $('.update-entry').each(function(i,e)
+    {
+        var $cb = $(this).find("input").first();
+        if ($cb.prop('checked')) {
+            var id = $(this).find(".data-id").first().text();
+            var title = $(this).find(".data-title").first().text();
+            var e_issn = $(this).find(".data-e_issn").first().text();
+            var print_issn = $(this).find(".data-print_issn").first().text();
+            var url = $(this).find(".data-url").first().text();
+
+            l.push({
+                    "id": id,
+                    "title": title,
+                    "e_issn": e_issn,
+                    "print_issn": print_issn,
+                    "url": url
+                }
+            );
+        }
+    });
+
+    data = {
+            "action": "update",
+            "journals": l
+        };
+
+    if (confirm(l.length + " {{ _('Zeitschriften werden aktualisiert. Sind Sie sicher?') }}")) {
+        const url = {{ url_for("doaj_import_update")|tojson }};
+        var json = JSON.stringify(data);
+
+        $('<form/>', 
+        { 
+            action: url, method: 'POST' }).append(
+            $('<input>', 
+            {type: 'hidden', 
+            id: 'data_as_json',
+            name: 'data_as_json',
+            value: json}),
+        ).appendTo('body').submit();
+    }
+}
+
+
+function update_setChecked(checked) {
+    $('.update-entry').each(function(i,e)
+    {
+        var $cb = $(this).find("input").first();
+        $cb.prop("checked", checked == 1 ? true : false);
+    });
+}
+</script>
+{% endblock additional %}
+
+

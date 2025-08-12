@@ -1,0 +1,159 @@
+import os
+import logging
+from datetime import timedelta
+
+SECRET_KEY = "dev"
+SESSION_COOKIE_NAME = "oajf-dev"
+SESSION_COOKIE_SAMESITE = 'Strict'
+PERMANENT_SESSION_LIFETIME = timedelta(days=7)
+
+# if set to False then cookie expires at end of session
+# this is not(!) a standard Flask config attribute
+SESSION_PERMANENT = False
+
+# log configuration
+# '' entry is root logger
+# 'app' ist the logger for the application
+# then follow used libraries, which can get noisy
+#
+# the app itself and werkzeug seem to be served by flasks logging somehow
+# messages get logged regardless of handlers being set
+# setting the levels does have an effect though
+home,_ignore = os.path.split(__file__)
+filename = os.path.join(home,'../oajf.log')
+LOGCONFIG = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {'default': {
+        'format': '%(asctime)s %(name)s %(levelname)-8s %(message)s',
+        'datefmt': '%Y-%m-%d_%H:%M:%S',
+    }},
+    'handlers': 
+    {
+        'wsgi': 
+        {
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'formatter': 'default',
+            'level': logging.DEBUG,
+        },
+        'file': 
+        {
+            'formatter': 'default',
+            'class': 'logging.FileHandler',
+            'filename': filename,
+            'mode': 'a',
+            'level': logging.DEBUG,
+        },
+    },
+    'loggers':
+    {
+        '':
+        {
+            'level': logging.DEBUG,
+            'handlers': ['wsgi','file']
+        },
+        'app':
+        {
+            'level': logging.DEBUG,
+            'handlers': []
+        },
+        'urllib3':
+        {
+            'level': logging.DEBUG,
+            'handlers': ['wsgi','file']
+        },
+        'requests':
+        {
+            'level': logging.DEBUG,
+            'handlers': ['wsgi','file']
+        },
+        'werkzeug':
+        {
+            'level': logging.WARN,
+            'handlers': []
+        },
+    }
+}
+del home
+del filename    
+
+# mail host and recipient for 
+# error mails
+MAIL = {
+    "host": "",
+    "port": 25,
+    "from": "",
+    "subject": "OAJF dev error",
+    "to": [],
+    "loglevel": logging.ERROR,
+}
+
+# database connection parameters, only tested with mariadb 
+DATABASE = {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "database": "",
+    "user": "",
+    "password": "",
+    "poolsize": 0,
+    "autocommit": False,
+}
+
+# LDAP authentication
+# configure server, search base and bind user
+# it is assumed that the authenticated user has an explicit service_name attribute set
+LDAP = {
+    'server': "",
+    'search_base': "",
+    'bind_user': "",
+    'bind_user_password': "",
+    'service_name': "OAJF"
+}
+
+
+# locale
+BABEL_DEFAULT_LOCALE = "de"
+
+# activity logging
+# if True save post and form data
+# be careful to not store confidential info like passwords
+STORE_REQUEST_DATA = True
+# one of 'plain', 'sha256', 'crpytopan'
+# - plain: store ips in session table as they are
+# - sha256: hash ips prepended by a random salt value (for new sessions)
+# - cryptonpan: use cryptopan algorithm
+STORE_IPS = 'sha256'
+
+SESSION_IGNORE_PATHS = [
+    r'/static/',
+    r'/admin_login/',
+    r'/robots.txt',
+]
+
+IP_GROUPS = {
+    'local': [
+        ('127.0.0.1',),
+    ],
+}
+
+
+UI = {
+#
+# logos
+#
+    "logo_left": "logoipsum-285.svg",
+    "logo_left_alt": 
+    {
+        "de": "alt text left logo de",
+        "en": "alt text left logo en",
+    },
+    "logo_left_url": "https://logoipsum.com/",
+    "logo_right": "logoipsum-224.svg",
+    "logo_right_alt": 
+    {
+        "de": "alt text right logo de",
+        "en": "alt text right logo en",
+    },
+    "logo_right_url": "https://logoipsum.com/",
+}

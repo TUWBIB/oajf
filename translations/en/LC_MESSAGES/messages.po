@@ -1,0 +1,748 @@
+# English translations for PROJECT.
+# Copyright (C) 2022 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-08-12 13:17+0200\n"
+"PO-Revision-Date: 2022-08-02 14:40+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: app.py:264
+msgid "Kein Passwort oder Benutzername angegeben."
+msgstr "No password or username specified."
+
+#: app.py:270
+msgid "Falsches Passwort oder Benutzername."
+msgstr "Wrong password or username."
+
+#: app.py:390
+msgid "Zeitschrift gespeichert."
+msgstr "Journal saved."
+
+#: app.py:406
+msgid "Zeitschrift gelöscht."
+msgstr "Journal deleted."
+
+#: app.py:436
+msgid "Kein File im request."
+msgstr "No file in request"
+
+#: app.py:440
+msgid "Kein Excel hochgeladen."
+msgstr "No Excel uploaded."
+
+#: app.py:443
+msgid "Kein Gültigkeitsende angegeben."
+msgstr "No end of validity specified."
+
+#: app.py:446
+msgid "Kein Verlag angegeben."
+msgstr "No publisher specified."
+
+#: app.py:452
+msgid "Falscher Dateityp, es werden nur .xlsx-Dateien unterstützt."
+msgstr "Wrong file type, only .xlsx-files are supported."
+
+#: app.py:474
+msgid "'Titel' oder 'Title' in Zelle A1 erwartet."
+msgstr "'Titel' or 'Title' expected in cell A1."
+
+#: app.py:477
+msgid "'Link' in Zelle B1 erwartet."
+msgstr "'Link' expected in cell B1."
+
+#: app.py:480
+msgid "'E-ISSN' in Zelle C1 erwartet."
+msgstr "'E-ISSN' expected in cell C1."
+
+#: app.py:483
+msgid "'Print-ISSN' in Zelle D1 erwartet."
+msgstr "'Print-ISSN' expected in cell D1,"
+
+#: app.py:539
+msgid "Import fehlgeschlagen. Fehler beim Parsen der Input-Datei."
+msgstr "Import failed. Error parsing the input file."
+
+#: app.py:562
+msgid "Excel-Datei erfolgreich importiert."
+msgstr "Excel file successfully imported."
+
+#: app.py:563
+#, python-brace-format
+msgid "{0} Zeitschrift gelöscht."
+msgid_plural "{0} Zeitschriften gelöscht."
+msgstr[0] "{0} journal deleted."
+msgstr[1] "{0} journals deleted."
+
+#: app.py:674
+msgid "Einstellung gelöscht."
+msgstr "Setting deleted."
+
+#: app.py:676
+msgid "Fehler beim Löschen der Einstellung."
+msgstr "Error deleting the setting."
+
+#: app.py:694
+msgid "Einstellung kopiert."
+msgstr "Setting copied."
+
+#: app.py:696
+msgid "Fehler beim Kopieren der Einstellung."
+msgstr "Error copying the setting."
+
+#: app.py:716
+msgid "Einstellung gespeichert."
+msgstr "Setting saved."
+
+#: app.py:718
+msgid "Fehler beim Speichern der Einstellung."
+msgstr "Error saving the setting."
+
+#: app.py:747
+#, python-brace-format
+msgid "{0} Zeitschrift gelöscht"
+msgid_plural "{0} Zeitschriften gelöscht."
+msgstr[0] "{0} journal deleted."
+msgstr[1] "{0} journals deleted."
+
+#: app.py:749
+#, python-brace-format
+msgid "{0} Excel-File gelöscht"
+msgid_plural "{0} Excel-Files gelöscht."
+msgstr[0] "{0} Excel file deleted."
+msgstr[1] "{0} Excel files deleted."
+
+#: app.py:751
+msgid "Verlag gelöscht."
+msgstr "Publisher deleted."
+
+#: app.py:755
+msgid "Fehler beim Löschen des Verlags."
+msgstr "Error deleting the publisher."
+
+#: app.py:778
+msgid "Verlag kopiert."
+msgstr "Publisher copied."
+
+#: app.py:780
+msgid "Fehler beim Kopieren des Verlags."
+msgstr "Errory copying the publisher."
+
+#: app.py:832
+msgid "Verlag gespeichert."
+msgstr "Publisher saved."
+
+#: app.py:834
+msgid "Fehler beim Speichern des Verlags."
+msgstr "Error saving the publisher."
+
+#: app.py:850 app.py:866
+msgid "Fehler beim Lesen der Excel-Files."
+msgstr "Error reading the Excel files."
+
+#: app.py:873
+msgid "Fehler beim Lesen des Excel-Files."
+msgstr "Error reading the Excel file\""
+
+#: app.py:893
+msgid "Excel-File gelöscht."
+msgstr "Excel file deleted."
+
+#: app.py:895
+msgid "File-Id fehlt im Aufruf."
+msgstr "File-Id missing in request."
+
+#: app.py:897
+msgid "Fehler beim Löschen des Excel-Files."
+msgstr "Error deleting the Excel file."
+
+#: app.py:1016
+#, python-brace-format
+msgid "{0} Zeitschrift importiert."
+msgid_plural "{0} Zeitschriften importiert."
+msgstr[0] "{0} journal imported."
+msgstr[1] "{0} journals imported."
+
+#: app.py:1023
+msgid "Fehler beim Import der Zeitschriften."
+msgstr "Error importing journals."
+
+#: app.py:1045
+#, python-brace-format
+msgid "{0} Zeitschrift aktualisiert."
+msgid_plural "{0} Zeitschriften aktualisiert."
+msgstr[0] "{0} journal updated."
+msgstr[1] "{0} journals updated."
+
+#: templates/admin_doaj_dump.html:26 templates/admin_doaj_dump.html:64
+#: templates/admin_doaj_withdrawn.html:11
+msgid "Alle markieren"
+msgstr "Select all"
+
+#: templates/admin_doaj_dump.html:27 templates/admin_doaj_dump.html:65
+#: templates/admin_doaj_withdrawn.html:12
+msgid "Keine markieren"
+msgstr "Select none"
+
+#: templates/admin_doaj_dump.html:29
+msgid "markierte Zeitschriften importieren"
+msgstr "import selected journals"
+
+#: templates/admin_doaj_dump.html:34 templates/admin_doaj_dump.html:72
+#: templates/admin_doaj_withdrawn.html:19
+msgid "Title"
+msgstr "Title"
+
+#: templates/admin_doaj_dump.html:35 templates/admin_doaj_dump.html:73
+#: templates/admin_doaj_withdrawn.html:20
+#: templates/admin_edit_journals.html:108
+#: templates/admin_edit_journals.html:213
+#: templates/admin_edit_journals.html:262 templates/index.html:101
+#: templates/index.html:280
+msgid "E-ISSN"
+msgstr "E-ISSN"
+
+#: templates/admin_doaj_dump.html:36 templates/admin_doaj_dump.html:74
+#: templates/admin_doaj_withdrawn.html:21
+#: templates/admin_edit_journals.html:209
+#: templates/admin_edit_journals.html:259 templates/index.html:276
+msgid "Print-ISSN"
+msgstr "Print-ISSN"
+
+#: templates/admin_doaj_dump.html:37
+msgid "Import"
+msgstr "Import"
+
+#: templates/admin_doaj_dump.html:67
+msgid "markierte Zeitschriften aktualisieren"
+msgstr "update selected journals"
+
+#: templates/admin_doaj_dump.html:75
+msgid "Diffs"
+msgstr "Diffs"
+
+#: templates/admin_doaj_dump.html:76
+msgid "Update"
+msgstr "Update"
+
+#: templates/admin_doaj_dump.html:150
+msgid "Zeitschriften werden importiert. Sind Sie sicher?"
+msgstr "journals will be imported. Are you sure?"
+
+#: templates/admin_doaj_dump.html:201
+msgid "Zeitschriften werden aktualisiert. Sind Sie sicher?"
+msgstr "journals will be updated. Are you sure?"
+
+#: templates/admin_doaj_withdrawn.html:9
+msgid "DOAJ-Verlinkung berücksichtigen (Default)"
+msgstr "consider DOAJ-linking (default)"
+
+#: templates/admin_doaj_withdrawn.html:10
+msgid "DOAJ-Verlinkung ignorieren"
+msgstr "ignore DOAJ-linking"
+
+#: templates/admin_doaj_withdrawn.html:14
+msgid "markierte Zeitschriften löschen"
+msgstr "Delete marked journals"
+
+#: templates/admin_doaj_withdrawn.html:22 templates/index.html:135
+msgid "Verlag"
+msgstr "Publisher"
+
+#: templates/admin_doaj_withdrawn.html:23
+msgid "DOAJ-Löschgrund"
+msgstr "DOAJ reason for deletion"
+
+#: templates/admin_doaj_withdrawn.html:24
+msgid "DOAJ-Löschdatum"
+msgstr "DOAJ delete date"
+
+#: templates/admin_doaj_withdrawn.html:25
+msgid "wird gelöscht"
+msgstr "deleted"
+
+#: templates/admin_doaj_withdrawn.html:90
+msgid "Zeitschriften werden gelöscht. Sind Sie sicher?"
+msgstr "journals will be deleted. Are you sure?"
+
+#: templates/admin_edit_journals.html:14
+msgid "nur aktive Journals"
+msgstr "only active journals"
+
+#: templates/admin_edit_journals.html:16
+msgid "nach Verlag filtern"
+msgstr "filter by publisher"
+
+#: templates/admin_edit_journals.html:18
+msgid "&lt;Alle Verlage&gt;"
+msgstr "&lt;All publishers&gt"
+
+#: templates/admin_edit_journals.html:25
+msgid "Suche"
+msgstr "Search"
+
+#: templates/admin_edit_journals.html:29 templates/admin_excel_list.html:25
+msgid "Download"
+msgstr "Download"
+
+#: templates/admin_edit_journals.html:41 templates/index.html:68
+#, python-format
+msgid ""
+"Es werden <span class=\"font-semibold text-gray-900\">%(start)d</span> "
+"bis <span class=\"font-semibold text-gray-900\">%(end)d</span> von <span "
+"class=\"font-semibold text-gray-900 \">%(length)d</span> Einträgen "
+"angezeigt."
+msgstr ""
+"Showing <span class=\"font-semibold text-gray-900\">%(start)d</span> to "
+"<span class=\"font-semibold text-gray-900\">%(end)d</span> of <span class"
+"=\"font-semibold text-gray-900 \">%(length)d</span> Entries."
+
+#: templates/admin_edit_journals.html:49
+msgid "Vorherige Seite"
+msgstr "previous page"
+
+#: templates/admin_edit_journals.html:64
+msgid "Nächste Seite"
+msgstr "next page"
+
+#: templates/admin_edit_journals.html:74
+msgid "TITEL"
+msgstr "TITLE"
+
+#: templates/admin_edit_journals.html:77 templates/index.html:87
+msgid "Titel ansteigend sortiert"
+msgstr "titles sorted ascending"
+
+#: templates/admin_edit_journals.html:81 templates/index.html:91
+msgid "Titel absteigend sortiert"
+msgstr "titles sorted descending"
+
+#: templates/admin_edit_journals.html:85 templates/index.html:96
+msgid "Titel unsortiert"
+msgstr "titles unsorted"
+
+#: templates/admin_edit_journals.html:91
+msgid "PRINT-ISSN"
+msgstr "PRINT-ISSN"
+
+#: templates/admin_edit_journals.html:94
+msgid "Print-ISSN ansteigend sortiert"
+msgstr "Print-ISSN sorted ascending"
+
+#: templates/admin_edit_journals.html:98
+msgid "Print-ISSN absteigend sortiert"
+msgstr "Print-ISSN sorted descending"
+
+#: templates/admin_edit_journals.html:102
+msgid "Print-ISSN unsortiert"
+msgstr "Print-ISSN unsorted"
+
+#: templates/admin_edit_journals.html:111 templates/index.html:104
+msgid "E-ISSN ansteigend sortiert"
+msgstr "E-ISSN sorted ascending"
+
+#: templates/admin_edit_journals.html:115 templates/index.html:108
+msgid "E-ISSN absteigend sortiert"
+msgstr "E-ISSN sorted descending"
+
+#: templates/admin_edit_journals.html:119 templates/index.html:113
+msgid "E-ISSN unsortiert"
+msgstr "E-ISSN unsorted"
+
+#: templates/admin_edit_journals.html:125
+msgid "GÜLTIG BIS"
+msgstr "VALID TILL"
+
+#: templates/admin_edit_journals.html:128
+msgid "Gültig bis ansteigend sortiert"
+msgstr "Valid till sorted ascending"
+
+#: templates/admin_edit_journals.html:132
+msgid "Gültig bis absteigend sortiert"
+msgstr "Valid till sorted descending"
+
+#: templates/admin_edit_journals.html:136
+msgid "Gültig bis unsortiert"
+msgstr "Valid till unsorted"
+
+#: templates/admin_edit_journals.html:142
+msgid "VERLAG"
+msgstr "PUBLISHER"
+
+#: templates/admin_edit_journals.html:145 templates/index.html:138
+msgid "Verlag ansteigend sortiert"
+msgstr "Publishers sorted ascending"
+
+#: templates/admin_edit_journals.html:149 templates/index.html:142
+msgid "Verlag absteigend sortiert"
+msgstr "Publishers sorted descending"
+
+#: templates/admin_edit_journals.html:153 templates/index.html:147
+msgid "Verlag unsortiert"
+msgstr "Publishers unsorted"
+
+#: templates/admin_edit_journals.html:175 templates/admin_publishers.html:24
+#: templates/admin_settings.html:26
+msgid "Bearbeiten"
+msgstr "Edit"
+
+#: templates/admin_edit_journals.html:176 templates/admin_excel_list.html:26
+#: templates/admin_publishers.html:27 templates/admin_settings.html:28
+#: templates/base.html:63
+msgid "Löschen"
+msgstr "Delete"
+
+#: templates/admin_edit_journals.html:182
+msgid "Keine Einträge gefunden."
+msgstr "No entries found."
+
+#: templates/admin_edit_journals.html:193 templates/admin_publishers.html:40
+#: templates/admin_settings.html:41
+msgid "Schließen"
+msgstr "Close"
+
+#: templates/admin_edit_journals.html:197 templates/admin_excel_list.html:10
+#: templates/admin_publishers.html:63 templates/admin_publishers.html:380
+#: templates/admin_settings.html:48
+msgid "Id"
+msgstr "Id"
+
+#: templates/admin_edit_journals.html:201
+#: templates/admin_edit_journals.html:253 templates/index.html:84
+msgid "Titel"
+msgstr "Title"
+
+#: templates/admin_edit_journals.html:205
+#: templates/admin_edit_journals.html:256 templates/admin_publishers.html:388
+#: templates/admin_publishers.html:396
+msgid "URL"
+msgstr "URL"
+
+#: templates/admin_edit_journals.html:217
+#: templates/admin_edit_journals.html:265
+msgid "Gültig bis"
+msgstr "Valid till"
+
+#: templates/admin_edit_journals.html:306
+msgid "Möchten Sie die folgende Zeitschrift löschen?"
+msgstr "Would you like to delete the following journal?"
+
+#: templates/admin_excel_list.html:11 templates/admin_publishers.html:13
+#: templates/admin_publishers.html:67 templates/admin_publishers.html:199
+#: templates/admin_settings.html:14 templates/admin_settings.html:52
+#: templates/admin_settings.html:98
+msgid "Name"
+msgstr "Name"
+
+#: templates/admin_excel_list.html:12
+msgid "Upload"
+msgstr "Upload"
+
+#: templates/admin_excel_list.html:13
+msgid "Valid"
+msgstr "Gültig"
+
+#: templates/admin_excel_list.html:14
+msgid "Publisher"
+msgstr "Verlag"
+
+#: templates/admin_excel_list.html:38
+msgid "Excel-File wird gelöscht. Sind Sie sicher?"
+msgstr "Excel-file will be deleted Sind Sie sicher?"
+
+#: templates/admin_login.html:10
+msgid "Benutzername:"
+msgstr "Username:"
+
+#: templates/admin_login.html:12
+msgid "Passwort:"
+msgstr "Password:"
+
+#: templates/admin_publishers.html:9
+msgid "Neuer Verlag"
+msgstr "New publisher"
+
+#: templates/admin_publishers.html:14 templates/admin_publishers.html:203
+msgid "Gültigkeit"
+msgstr "Validity"
+
+#: templates/admin_publishers.html:15 templates/admin_publishers.html:75
+#: templates/index.html:118 templates/index.html:206
+msgid "OA-Status"
+msgstr "OA Status"
+
+#: templates/admin_publishers.html:26 templates/admin_settings.html:27
+msgid "Kopieren"
+msgstr "Copy"
+
+#: templates/admin_publishers.html:71 templates/index.html:218
+msgid "Vertragslaufzeit"
+msgstr "Duration of agreement"
+
+#: templates/admin_publishers.html:83
+msgid "Antrag erforderlich"
+msgstr "Antrag erforderlich"
+
+#: templates/admin_publishers.html:91
+msgid "DOAJ"
+msgstr "DOAJ"
+
+#: templates/admin_publishers.html:95
+msgid "DOAJ-verknüpft"
+msgstr "DOAJ-linked"
+
+#: templates/admin_publishers.html:101 templates/admin_publishers.html:123
+#: templates/admin_publishers.html:249 templates/index.html:210
+#: templates/index.html:214
+msgid "Gültig für"
+msgstr "Valid for"
+
+#: templates/admin_publishers.html:105 templates/admin_publishers.html:127
+#: templates/admin_publishers.html:241 templates/index.html:152
+#: templates/index.html:228 templates/index.html:232
+msgid "Kostenübernahme"
+msgstr "Cost coverage"
+
+#: templates/admin_publishers.html:109 templates/admin_publishers.html:131
+#: templates/admin_publishers.html:233 templates/index.html:244
+#: templates/index.html:248
+msgid "Ablauf"
+msgstr "Workflow"
+
+#: templates/admin_publishers.html:113 templates/admin_publishers.html:135
+#: templates/admin_publishers.html:265 templates/index.html:252
+#: templates/index.html:256
+msgid "Sonderbestimmungen FWF"
+msgstr "Special rules FWF"
+
+#: templates/admin_publishers.html:117 templates/admin_publishers.html:139
+#: templates/admin_publishers.html:257 templates/index.html:236
+#: templates/index.html:240
+msgid "Artikeltyp"
+msgstr "Article type"
+
+#: templates/admin_publishers.html:144
+msgid "Neuer Link"
+msgstr "Add Link"
+
+#: templates/admin_publishers.html:157
+msgid "Linktyp"
+msgstr "Linktype"
+
+#: templates/admin_publishers.html:159
+msgid "&lt;Linktyp wählen&gt;"
+msgstr "&lt;Choose linktype&gt;"
+
+#: templates/admin_publishers.html:237
+msgid "Ablauf en"
+msgstr "Ablauf en"
+
+#: templates/admin_publishers.html:245
+msgid "Kostenübernahme en"
+msgstr "Cost coverage en"
+
+#: templates/admin_publishers.html:253
+msgid "Gültig für en"
+msgstr "Gültig für en"
+
+#: templates/admin_publishers.html:261
+msgid "Artikeltyp en"
+msgstr "Article type en"
+
+#: templates/admin_publishers.html:269
+msgid "Sonderbestimmungen FWF en"
+msgstr "Special rules FWF en"
+
+#: templates/admin_publishers.html:299
+msgid ""
+"Es werden auch alle Zeitschriften und Excel-Dateien gelöscht, die mit "
+"diesem Verlag verknüpft sind. Möchten Sie fortsetzen?"
+msgstr ""
+"All journals and Excel files linked to this publisher will also be "
+"deleted. Do you want to continue?"
+
+#: templates/admin_publishers.html:417 templates/admin_publishers.html:425
+msgid "Linktext de"
+msgstr "Linktext de"
+
+#: templates/admin_publishers.html:433 templates/admin_publishers.html:441
+msgid "Linktext en"
+msgstr "Linktext en"
+
+#: templates/admin_publishers.html:448
+msgid "Link löschen"
+msgstr "Delete link"
+
+#: templates/admin_settings.html:9
+msgid "Neue Einstellung"
+msgstr "New Setting"
+
+#: templates/admin_settings.html:15 templates/admin_settings.html:56
+#: templates/admin_settings.html:102
+msgid "Wert"
+msgstr "Value"
+
+#: templates/admin_settings.html:16 templates/admin_settings.html:60
+#: templates/admin_settings.html:106
+msgid "Wert (de)"
+msgstr "Value (de)"
+
+#: templates/admin_settings.html:17 templates/admin_settings.html:64
+#: templates/admin_settings.html:110
+msgid "Wert (en)"
+msgstr "Value (en)"
+
+#: templates/admin_settings.html:115
+msgid "Einstellung wird gelöscht. Sind Sie sicher"
+msgstr "Setting will be deleted. Are you sure?"
+
+#: templates/admin_upload.html:9
+msgid "Excel xlsx-Files mit den folgenden Spaltenköpfen können importiert werden"
+msgstr "Excel xlsx-files with the following column headers can be imported"
+
+#: templates/admin_upload.html:19
+msgid "Datei hochladen"
+msgstr "Upload file"
+
+#: templates/admin_upload.html:21
+msgid "Gültigkeitsende auswählen"
+msgstr "Select end of validity"
+
+#: templates/admin_upload.html:23
+msgid "Verlag auswählen"
+msgstr "Select publisher"
+
+#: templates/admin_upload.html:31
+msgid "Vorhandene Journals des Verlags löschen"
+msgstr "Delete existings journals for publisher"
+
+#: templates/admin_upload.html:33
+msgid "Hochladen"
+msgstr "Upload"
+
+#: templates/base.html:32
+msgid "Anmelden"
+msgstr "Login"
+
+#: templates/base.html:37
+msgid "Home"
+msgstr "Home"
+
+#: templates/base.html:40
+msgid "Settings"
+msgstr ""
+
+#: templates/base.html:43
+msgid "Verlage"
+msgstr "Publishers"
+
+#: templates/base.html:46
+msgid "Zeitschriften"
+msgstr "Journals"
+
+#: templates/base.html:58
+msgid "Importieren"
+msgstr "Import"
+
+#: templates/base.html:66
+msgid "Liste"
+msgstr "List"
+
+#: templates/base.html:78
+msgid "Withdrawn"
+msgstr ""
+
+#: templates/base.html:84
+msgid "Import / Update"
+msgstr ""
+
+#: templates/base.html:89
+msgid "Abmelden"
+msgstr "Logout"
+
+#: templates/base.html:159
+msgid "Support"
+msgstr "Support"
+
+#: templates/base.html:162
+msgid "Barrierefreiheitserklärung"
+msgstr "Declaration On Accessibility"
+
+#: templates/base.html:165
+msgid "Datenschutzerklärung"
+msgstr "Data Protection Declaration"
+
+#: templates/base.html:168
+msgid "Impressum"
+msgstr "Legal Notice"
+
+#: templates/index.html:46
+msgid "Zeitschriften nach Titel oder ISSN oder Verlag suchen"
+msgstr "Search journals by title or ISSN or publisher"
+
+#: templates/index.html:54
+msgid "Keyword löschen"
+msgstr "Suche löschen"
+
+#: templates/index.html:66
+msgid ""
+"Ihre Suche liefert <span class=\"font-semibold text-gray-900\">0</span> "
+"Ergebnisse."
+msgstr ""
+"Your search returns <span class=\"font-semibold text-gray-900\">0</span> "
+"results."
+
+#: templates/index.html:121
+msgid "OA-Status ansteigend sortiert"
+msgstr "OA-Status sorted ascending"
+
+#: templates/index.html:125
+msgid "OA-Status absteigend sortiert"
+msgstr "OA-Status sorted descending"
+
+#: templates/index.html:130
+msgid "OA-Status unsortiert"
+msgstr "OA-Status unsorted"
+
+#: templates/index.html:155
+msgid "Kostenübernahme ansteigend sortiert"
+msgstr "cost coverage sorted ascending"
+
+#: templates/index.html:159
+msgid "Kostenübernahme absteigend sortiert"
+msgstr "cost coverage sorted descending"
+
+#: templates/index.html:164
+msgid "Kostenübernahme unsortiert"
+msgstr "cost coverage unsorted"
+
+#: templates/index.html:196
+msgid "Kein Antrag erforderlich"
+msgstr "No application needed"
+
+#: templates/index.html:199
+msgid "mehr anzeigen"
+msgstr "show more"
+
+#: templates/index.html:261
+msgid "Link"
+msgstr "Link"
+
+#: templates/index.html:340
+msgid "Nach oben scrollen"
+msgstr "Scroll up"
+
+#: templates/index.html:344
+msgid "Nach unten scrollen"
+msgstr "Scroll down"

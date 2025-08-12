@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="{{ session['lang'] }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titlehead %}{% endblock titlehead %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">    
+    <link href="{{ url_for('static', filename='main.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='highlight.js') }}"></script>
+    {% block head %}
+    {% endblock head %}
+</head>
+<body class="pt-16 flex flex-col h-screen bg-oajf-text-bg">
+<div class="flex flex-col h-screen">
+
+{% block nav %}
+{% with header_mode='regular' %}
+    {% include 'inc_header.html' %}
+{% endwith %}
+    
+<div class="drawer drawer--left" id="drawer-name-left" data-drawer-target>
+<div class="drawer__overlay" data-drawer-close tabindex="-1"></div>
+<div class="drawer__wrapper flex">
+{% with header_mode='drawer' %}
+    {% include 'inc_header.html' %}
+{% endwith %}
+<div class="drawer__content w-[300px] min-w-[300px] overflow-y-auto ">
+    <ul class="font-mediumgroup">
+        {% if not 'uid' in session %}
+        <li class=" hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+            <a href="{{ url_for('admin_login') }}">{{ _("Anmelden") }}</a>
+        </li>
+        {% else %}
+
+        <li class=" hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+            <a href="{{ url_for('index') }}">{{ _("Home") }}</a>
+        </li>        
+        <li class=" hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+            <a href="{{ url_for('admin_settings') }}">{{ _("Settings") }}</a>
+        </li>        
+        <li class=" hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+            <a href="{{ url_for('admin_publishers_get') }}">{{ _("Verlage") }}</a>
+        </li>
+        <li class=" hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+            <a href="{{ url_for('admin_edit_journals') }}">{{ _("Zeitschriften") }}</a>
+        </li>        
+
+        <li class="hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100 flex flex-row w-full" subnavitem-toggle="navitem-excel">
+            <span class="grow">Excel &hellip;</span>
+            <button class="mr-4">
+                <span class="w-5 icon-[ep--arrow-down]"></span>
+            </button>
+        </li>
+        <ul id="navitem-excel" class="space-y-1 mt-2 ml-4 hidden">
+            <li class="hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+                <a href="{{ url_for('admin_upload_get') }}">
+                {{ _("Importieren") }}
+                </a>
+            </li>
+            <li class=" hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+                <a href="{{ url_for('admin_delete') }}">
+                {{ _("Löschen") }}</a>
+            </li>
+            <li class=" hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+                <a href="{{ url_for('admin_excel_list') }}">{{ _("Liste") }}</a>
+            </li>
+        </ul>
+        <li class="hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100 flex flex-row w-full" subnavitem-toggle="navitem-doaj">
+            <span class="grow">DOAJ &hellip;</span>
+            <button class="mr-4">
+                <span class="w-5 icon-[ep--arrow-down]"></span>
+            </button>
+        </li>
+        <ul id="navitem-doaj" class="space-y-1 mt-2 ml-4 hidden">
+            <li class="hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+                <a href="{{ url_for('doaj_withdrawn') }}">
+                {{ _("Withdrawn") }}
+                </a>
+            </li>
+            
+            <li class="hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+                <a href="{{ url_for('doaj_import_update') }}">
+                {{ _("Import / Update") }}</a>
+            </li>
+
+        </ul>
+        <li class=" hover:bg-gray-700 py-2 pl-2 text-white border-b border-x-stone-100">
+            <a href="{{ url_for('admin_logout') }}">{{ _("Abmelden") }}</a>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+</div>
+</div>
+{% endblock nav %}
+
+<div class="grow">
+<main>
+{% block messages %}
+{% with msgs = get_flashed_messages(category_filter=[MESSAGE_TYPE_ERROR]) %}
+{% if msgs %}
+<div class="flex flex-col text-center items-center bg-orange-100 border-l-4 border-orange-500 text-orange-700 mt-12 p-4" role="alert">
+{% for msg in msgs %}
+<p class="font-bold">{{ msg }}</p>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% with msgs = get_flashed_messages(category_filter=[MESSAGE_TYPE_SUCCESS]) %}
+{% if msgs %}
+<div class="flex flex-col text-center items-center bg-green-100 border-l-4 border-green-500 text-green-700 mt-12 p-4" role="alert">
+{% for msg in msgs %}
+<p class="font-bold">{{ msg }}</p>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% with msgs = get_flashed_messages(category_filter=[MESSAGE_TYPE_WARNING]) %}
+{% if msgs %}
+<div class="flex flex-col text-center items-center bg-yellow-100 border-l-4 border-yellow-500 text-green-700 mt-12 p-4" role="alert">
+{% for msg in msgs %}
+<p class="font-bold">{{ msg }}</p>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% with msgs = get_flashed_messages(category_filter=[MESSAGE_TYPE_INFO]) %}
+{% if msgs %}
+<div class="flex flex-col text-center items-center bg-emerald-100 border-l-4 border-emerald-500 text-blue-700 mt-12 p-4" role="alert">
+{% for msg in msgs %}
+<p class="font-bold">{{ msg }}</p>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% with msgs = get_flashed_messages(category_filter=['message']) %}
+{% if msgs %}
+<div class="flex flex-col text-center items-center bg-emerald-100 border-l-4 border-emerald-500 text-blue-700 mt-12 p-4" role="alert">
+{% for msg in msgs %}
+<p class="font-bold">{{ msg }}</p>
+{% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+{% endblock messages %}
+{% block content %}
+{% endblock content %}
+</main>
+</div>
+    
+{% block footer %}
+<footer class="flex items-center justify-start font-pt-sans font-medium leading-[62px] min-h-[62px] h-[62px] mt-4 w-full bg-oajf-1 text-white text-[13px] tracking-[0.09rem]">
+{% with footer_left_label = getSettingValueLang('footer_left_label',CURRENT_LOCALE) %}
+<div class="flex items-center justify-start grow"><span class="px-4">{% if footer_left_label %}{{ footer_left_label|safe }}{% endif %}</span></div>
+{% endwith %}
+<ul class="flex items-center text-center justify-end grow-0">
+{% with url = getSettingValueLang('url_support',CURRENT_LOCALE) %}
+<li class="mr-[20px] hover:bg-blue-400 focus-within:bg-blue-400"><a class="outline-hidden" href="{% if url %}{{ url }}{% else %}{{ url_for('support') }}{% endif %}">{{ _('Support') }}</a></li>
+{% endwith %}
+{% with url = getSettingValueLang('url_accessibility',CURRENT_LOCALE) %}
+<li class="mr-[20px] hover:bg-blue-400 focus-within:bg-blue-400"><a class="outline-hidden" href="{% if url %}{{ url }}{% else %}{{ url_for('accessibility') }}{% endif %}">{{ _('Barrierefreiheitserklärung') }}</a></li>
+{% endwith %}
+{% with url = getSettingValueLang('url_data_protection',CURRENT_LOCALE) %}
+<li class="mr-[20px] hover:bg-blue-400 focus-within:bg-blue-400"><a class="outline-hidden" href="{% if url %}{{ url }}{% else %}{{ url_for('data_protection') }}{% endif %}">{{ _('Datenschutzerklärung') }}</a></li>
+{% endwith %}
+{% with url = getSettingValueLang('url_legal',CURRENT_LOCALE) %}
+<li class="mr-[20px] hover:bg-blue-400 focus-within:bg-blue-400"><a class="outline-hidden" href="{% if url %}{{ url }}{% else %}{{ url_for('legal') }}{% endif %}"">{{ _('Impressum') }}</a></li>
+{% endwith %}
+</ul>
+</footer>
+{% endblock footer %}
+</div>
+
+<script>
+var drawer = function () {
+    function trapFocus($element) {
+        var $focusableEls = $element.find('a[href]:not([disabled]), button:not([disabled]), textarea:not([disabled]), input[type="text"]:not([disabled]), input[type="radio"]:not([disabled]), input[type="checkbox"]:not([disabled]), select:not([disabled])');
+        var $firstFocusableEl = $focusableEls.first();  
+        var $lastFocusableEl = $focusableEls.last();
+        var KEYCODE_TAB = 9;
+
+        $element.on('keydown', function(e) {
+            var isTabPressed = (e.key === 'Tab' || e.keyCode === KEYCODE_TAB);
+            if (!isTabPressed) { 
+                return; 
+            }
+            // shift + tab            
+            if (e.shiftKey) {
+                if ($(document.activeElement).is($firstFocusableEl)) {
+                    $lastFocusableEl.focus();
+                    e.preventDefault();
+                }
+            } 
+            // tab
+            else {
+                if ($(document.activeElement).is($lastFocusableEl)) {
+                    $firstFocusableEl.focus();
+                    e.preventDefault();
+                }
+            }
+        });
+    }       
+
+    var settings = {
+        speedOpen: 50,
+        speedClose: 350,
+        activeClass: 'is-active',
+        visibleClass: 'is-visible',
+        selectorTarget: '[data-drawer-target]',
+        selectorTrigger: '[data-drawer-trigger]',
+        selectorClose: '[data-drawer-close]',
+    };
+
+    var toggleAccessibility = function ($event) {
+        if ($event.attr('aria-expanded') === 'true') {
+            $event.attr('aria-expanded', false);
+        } else {
+            $event.attr('aria-expanded', true);
+        }   
+    };
+
+    // Open Drawer
+    var openDrawer = function ($trigger) {
+        var $target = $('#' + $trigger.attr('aria-controls'));
+        $target.addClass(settings.activeClass);
+        $('html').css('overflow', 'hidden');
+        toggleAccessibility($trigger);
+        setTimeout(function () {
+            $target.addClass(settings.visibleClass);
+            trapFocus($target);
+        }, settings.speedOpen); 
+
+    };
+
+    // Close Drawer
+    var closeDrawer = function ($event) {
+        var $closestParent = $event.closest(settings.selectorTarget),
+            $childrenTrigger = $('[aria-controls="' + $closestParent.attr('id') + '"]');
+
+        $closestParent.removeClass(settings.visibleClass);
+        $('html').css('overflow', '');
+        toggleAccessibility($childrenTrigger);
+        setTimeout(function () {
+            $closestParent.removeClass(settings.activeClass);
+        }, settings.speedClose);             
+
+    };
+
+    // Click Handler
+    var clickHandler = function (event) {
+        var $toggle = $(event.target),
+            $open = $toggle.closest(settings.selectorTrigger),
+            $close = $toggle.closest(settings.selectorClose);
+
+        if ($open.length > 0) {
+            openDrawer($open);
+        }
+        if ($close.length > 0) {
+            closeDrawer($close);
+        }
+        if ($open.length > 0 || $close.length > 0) {
+            event.preventDefault();
+        }
+    };
+
+    // handle escape
+    var keydownHandler = function (event) {
+        if (event.key === 'Escape' || event.keyCode === 27) {
+
+            var $drawers = $(settings.selectorTarget);
+            $drawers.each(function() {
+                var $drawer = $(this);
+                if ($drawer.hasClass(settings.activeClass)) {
+                    closeDrawer($drawer);
+                }
+            });
+        }
+    };
+
+    $(document).on('click', clickHandler);
+    $(document).on('keydown', keydownHandler);
+};
+
+
+$(document).ready(function() { 
+    $("[subnavitem-toggle]").click(function () 
+    {
+        var id = "#" + $(this).attr("subnavitem-toggle");
+        $(id).slideToggle();
+    });
+
+    drawer();
+});
+</script>
+
+
+{% block additional %}
+{% endblock additional %}
+</body>
+</html>

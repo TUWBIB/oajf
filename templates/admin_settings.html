@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}
+Admin - Settings
+{% endblock title %}
+{% block head %}
+{% endblock head %}
+{% block content %}
+<div class="mx-4">
+    <button class="mt-4 text-white font-bold bg-[#069] hover:bg-[#005580] cursor-pointer focus:ring-4 focus:outline-hidden focus:ring-blue-300 rounded-lg text-sm px-5 py-2.5 text-center" onclick="setDialogValues(null)">{{ _('Neue Einstellung') }}</button>
+</div>
+
+<div class="h-full mx-4 mt-4 text-sm text-left text-black overflow-x-auto">
+    <div class="grid grid-cols-5 px-5 py-4 text-xs font-bold text-white uppercase justify-items-start items-center bg-gray-800">
+        <div>{{ gettext("Name") }}</div>
+        <div>{{ gettext("Wert") }}</div>
+        <div>{{ gettext("Wert (de)") }}</div>
+        <div>{{ gettext("Wert (en)") }}</div>
+    </div>
+    {% for o in g.l_setting %}
+    <div id="{{ o.id }}" class="grid grid-cols-5 break-all max-h-16 pb-1 px-4 overflow-y-auto justify-items-start align-top odd:bg-gray-200 even:bg-white">
+        <div class="">{{ o.name }}</div>
+        <div class="">{{ o.value }}</div>
+        <div class="">{{ o.value_de }}</div>
+        <div class="">{{ o.value_en }}</div>
+        <div class="flex flex-col items-start">
+            <button id="b_edit_{{ o.id }}" class="flex items-center text-center font-medium text-blue-600 hover:underline" onclick="setDialogValues({{ o.toJson() }} )"><span class="icon-[heroicons--pencil] mr-2"></span>{{ _("Bearbeiten") }}</button>
+            <button class="flex items-center text-center font-medium text-green-700 hover:underline" onclick="copySetting({{ o.id }})"><span class="icon-[heroicons--clipboard-document] mr-2"></span>{{ _("Kopieren") }}</button>
+            <button class="flex items-center text-center font-medium text-red-700 hover:underline" onclick="deleteSetting({{ o.id }})"><span class="icon-[heroicons--trash] mr-2"></span>{{ _("Löschen") }}</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+
+{# modal #}
+<div id="setting-modal" tabindex="-1" class="fixed top-0 left-0 right-0 z-50 hidden w-full p-4 overflow-x-scroll overflow-y-scroll md:inset-0 md:h-full">
+    <div class="relative w-full h-full">
+        <div class="relative bg-white rounded-lg shadow-sm">
+            <button type="button" onclick="hideModal();" class="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                <span class="w-5 h-5 icon-[ep--close]"></span>
+                <span class="sr-only">{{ _('Schließen') }}</span>
+            </button>
+            <div class="px-6 py-6 lg:px-8">
+                <form class="space-y-6" action="/admin_save_setting" method="post">
+                <div>
+                    <div class="p-4 rounded-lg bg-gray-50">
+                        <div>
+                            <label for="dlg_id" class="hidden mb-2 text-sm font-medium text-gray-900">{{ _("Id") }}</label>
+                            <input type="text" name="id" id="dlg_id" class="hidden bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-full p-2.5" required>
+                        </div>
+                        <div>
+                        <label for="dlg_name" class="block mb-2 text-sm font-medium text-gray-900">{{ _("Name") }}</label>
+                        <input type="text" name="name" id="dlg_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" required>
+                        </div>
+                        <div>
+                        <label for="dlg_value" class="block mb-2 text-sm font-medium text-gray-900">{{ _("Wert") }}</label>
+                        <input type="text" name="value" id="dlg_value" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        </div>
+                        <div>
+                        <label for="dlg_value_de" class="block mb-2 text-sm font-medium text-gray-900">{{ _("Wert (de)") }}</label>
+                        <input type="text" name="value_de" id="dlg_value_de" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        </div>
+                        <div>
+                        <label for="dlg_value_en" class="block mb-2 text-sm font-medium text-gray-900">{{ _("Wert (en)") }}</label>
+                        <input type="text" name="value_en" id="dlg_value_en" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        </div>
+                    </div>
+                <button type="submit" class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-hidden focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Speichern</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+{% block additional %}
+<script>
+function hideModal() { $('#setting-modal').hide(); }
+function showModal() { $('#setting-modal').show(); }
+
+function setDialogValues(o)
+{
+    showModal();
+
+    var x;
+    if (o == null)
+    {
+        o={id:-1};
+    }
+
+    x=document.getElementById('dlg_id')
+    x.value=o.id 
+    x.placeholder=o.id;
+
+    x=document.getElementById('dlg_name');        
+    x.value=(o.name) ? o.name : '';
+    x.placeholder=(o.name) ? o.name : "{{ _('Name') }}";
+
+    x=document.getElementById('dlg_value');        
+    x.value=(o.value) ? o.value : '';
+    x.placeholder=(o.value) ? o.value : "{{ _('Wert') }}";
+
+    x=document.getElementById('dlg_value_de');        
+    x.value=(o.value_de) ? o.value_de : '';
+    x.placeholder=(o.value_de) ? o.value_de : "{{ _('Wert (de)') }}";
+
+    x=document.getElementById('dlg_value_en');        
+    x.value=(o.value_en) ? o.value_en : '';
+    x.placeholder=(o.value_en) ? o.value_en : "{{ _('Wert (en)') }}";
+}
+
+function deleteSetting(id) 
+{
+    if (confirm("{{ _('Einstellung wird gelöscht. Sind Sie sicher') }}")) 
+    {
+        url = {{ url_for("admin_delete_setting")|tojson }};
+        form = $('<form>', {
+                'action': url,
+                'method': 'post'
+        });
+        form.append($('<input>', {
+            'name': 'id',
+            'value': id
+        }));
+        form.appendTo('body');
+        form.submit();
+    }
+}
+
+function copySetting(id) 
+{
+    url = {{ url_for("admin_copy_setting")|tojson }};
+    form = $('<form>', {
+                'action': url,
+                'method': 'post'
+    });
+    form.append($('<input>', {
+        'name': 'id',
+        'value': id
+    }));
+    form.appendTo('body');
+    form.submit();
+}
+</script>
+{% endblock additional %}
+  

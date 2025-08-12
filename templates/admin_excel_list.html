@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}
+Admin - Excel - List
+{% endblock title %}
+
+{% block content %}
+{% if l_excel %}
+<div class="h-full mx-4 mt-4 text-sm text-left text-black overflow-x-auto">
+    <div class="grid grid-cols-8 px-5 py-4 text-xs font-bold text-white uppercase justify-items-start items-center bg-gray-800">
+        <div class="col-span-1">{{ gettext("Id") }}</div>
+        <div class="col-span-2">{{ gettext("Name") }}</div>
+        <div class="col-span-1">{{ gettext("Upload") }}</div>
+        <div class="col-span-1">{{ gettext("Valid") }}</div>
+        <div class="col-span-2">{{ gettext("Publisher") }}</div>
+        <div class="col-span-1"></div>
+    </div>
+    {% for e in l_excel %}
+    <div class="grid grid-cols-8 break-all max-h-16 pb-1 px-4 overflow-y-auto items-center justify-items-start align-top odd:bg-gray-200 even:bg-white">
+         <div id="{{ e.id }}" class="col-span-1">{{ e.id }}</div>
+        <div class="col-span-2">{{ e.name }}</div>
+        <div class="col-span-1">{{ e.uploaded }}</div>
+        <div class="col-span-1">{{ e.valid }}</div>
+        <div class="col-span-2">{{ e.publisher.name }}</div>
+        <div class="flex flex-col items-start">
+            <a class="flex items-center text-center font-medium text-blue-600 hover:underline" href="{{ url_for('admin_excel_download',id=e.id) }}"><span class="icon-[heroicons--arrow-down-tray] mr-2"></span>{{ _('Download') }}</a>
+            <button class="flex items-center text-center font-medium text-red-700 hover:underline" onclick="deleteExcel({{ e.id }});"><span class="icon-[heroicons--trash] mr-2"></span>{{ _('Löschen') }}</button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock content %}
+
+{% block additional %}
+<script>
+function deleteExcel(id)
+{
+    if (confirm(" {{ _('Excel-File wird gelöscht. Sind Sie sicher?') }}")) 
+    {
+        url = {{ url_for("admin_excel_delete")|tojson }};
+        form = $('<form>', {
+            'action': url,
+            'method': 'post'
+        });
+        form.append($('<input>', {
+            'name': 'id',
+            'value': id
+        }));
+        form.appendTo('body');
+        form.submit();
+    }
+}
+</script>
+{% endblock additional %}
