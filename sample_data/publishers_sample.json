@@ -1,0 +1,47 @@
+[
+    {
+        "name": "other (DOAJ-indexed)",
+        "validity": "2025",
+        "oa_status": "gold",
+        "application_requirement": "required",
+        "funder_info": "<ul><li>Stellen Sie vor der Artikel-Einreichung einen Antrag auf F\u00f6rderung.</li></ul>",
+        "cost_coverage": "F\u00f6rderantrag notwendig",
+        "valid_tu": "Submitting corresponding author",
+        "article_type": "Begutachtete Artikel",
+        "further_info": "Verpflichtung zu Lizenz CC BY 4.0.",
+        "funder_info_en": "<ul><li>Submit an application for funding before submitting the article.</li></ul>",
+        "cost_coverage_en": "Funding application required.",
+        "valid_tu_en": "Submitting corresponding author",
+        "article_type_en": "Peer-reviewed articles",
+        "further_info_en": "CC BY 4.0 license mandatory.",
+        "is_doaj": 1,
+        "doaj_linked": 0,
+        "links": []
+    },
+    {
+        "name": "Some Earthly Publisher (SEP)",
+        "validity": "2025 - 2029",
+        "oa_status": "hybrid",
+        "application_requirement": "not required",
+        "funder_info": "<ul><li>Artikel wird im Verlags-Workflow auf Basis der Affiliation erkannt und bei Acceptance automatisch \u00fcbermittelt.</li><li>N\u00e4chster Schritt im Workflow.</li></ul>",
+        "cost_coverage": "Kein Antrag notwendig. Auch Publikationen mit Projektf\u00f6rderung sind durch die Vereinbarung gedeckt.",
+        "valid_tu": "Submitting corresponding author ",
+        "article_type": "Begutachtete Artikel",
+        "further_info": "Verpflichtung zu Lizenz CC BY 4.0.",
+        "funder_info_en": "<ul><li>Article is recognized in the publishing workflow based on the affiliation and automatically sent upon acceptance.</li><li>Next step in the workflow.</li></ul>",
+        "cost_coverage_en": "No funding application necessary. Publications with project funding are also included in the agreement.",
+        "valid_tu_en": "Submitting corresponding author",
+        "article_type_en": "Peer-reviewed articles",
+        "further_info_en": "CC BY 4.0 license mandatory.",
+        "is_doaj": 0,
+        "doaj_linked": 0,
+        "links": [
+            {
+                "link": "https://some.publisher.earth.com/",
+                "linktype": "publisher",
+                "linktext_de": "Some Earthly Publisher Webseite",
+                "linktext_en": "Some Earthly Publisher Webpage"
+            }
+        ]
+    }
+]

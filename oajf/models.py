@@ -219,9 +219,10 @@ class Publisher:
         self.doaj_linked = None
         self.links = []
 
-    def toDict(self):
+    def toDict(self,includeid=True):
         d = {}
-        d['id'] = self.id
+        if includeid:
+            d['id'] = self.id
         d['name'] = self.name
         d['validity'] = self.validity
         d['oa_status'] = self.oa_status.key if self.oa_status else None
@@ -242,7 +243,8 @@ class Publisher:
         d['links'] = x
         for l in self.links:
             y = {}
-            y['id'] = l.id
+            if includeid:
+                y['id'] = l.id
             y['link'] = l.link   
             y['linktype'] = l.linktype.key if l.linktype else None
             y['linktext_de'] = l.linktext_de
@@ -252,6 +254,42 @@ class Publisher:
 
     def toJson(self):
         return json.dumps(self.toDict())
+    
+    @classmethod
+    def fromDict(cls,d):
+        o: Publisher
+
+        o = Publisher()
+        o.id = d.get('id',None)
+        o.name = d.get('name',None)
+        o.validity = d.get('validity',None)
+        x = d.get('oa_status',None)
+        o.oa_status = OASTATUS.get(x,None) if x else None
+        x = d.get('application_requirement',None)
+        o.application_requirement = APPLICATION_REQUIREMENT.get(x,None) if x else None
+        o.funder_info = d.get('funder_info',None)
+        o.cost_coverage = d.get('cost_coverage',None)
+        o.valid_tu = d.get('valid_tu',None)
+        o.article_type = d.get('article_type',None)
+        o.further_info = d.get('further_info',None)
+        o.funder_info_en = d.get('funder_info_en',None)
+        o.cost_coverage_en = d.get('cost_coverage_en',None)
+        o.valid_tu_en = d.get('valid_tu_en',None)
+        o.article_type_en = d.get('article_type_en',None)
+        o.further_info_en = d.get('further_info_en',None)
+        o.is_doaj = d.get('is_doaj',0)
+        o.doaj_linked = d.get('doaj_linked',0)
+        o.links = []
+        for e in d.get('links',[]):
+            l = Link()
+            l.link = e.get('link',None)
+            x = e.get('linktype',None)
+            l.linktype = LINKTYPE.get(x,None) if x else None
+            l.linktext_de = e.get('linktext_de',None)
+            l.linktext_en = e.get('linktext_en',None)
+            o.links.append(l)
+
+        return o
     
     def __eq__(self,other):
         return True if self.id == other.id else False

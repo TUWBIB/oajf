@@ -5,8 +5,13 @@ Admin - Publishers
 {% block head %}
 {% endblock head %}
 {% block content %}
-<div class="mx-4">
-    <button class="mt-4 text-white font-bold bg-[#069] hover:bg-[#005580] cursor-pointer focus:ring-4 focus:outline-hidden focus:ring-blue-300 rounded-lg text-sm px-5 py-2.5 text-center" onclick="setDialogValues(null)">{{ _('Neuer Verlag') }}</button>
+<div class="mx-4 mt-4 flex w-full">
+    <button class="self-start text-white font-bold bg-[#069] hover:bg-[#005580] cursor-pointer focus:ring-4 focus:outline-hidden focus:ring-blue-300 rounded-lg text-sm px-5 py-2.5 text-center" onclick="setDialogValues(null)">{{ _('Neuer Verlag') }}</button>
+    <form action="{{ url_for('admin_export_publishers_as_json') }}">
+        <button type="submit" class="ml-32 flex items-center text-center text-white font-bold bg-[#069] hover:bg-[#005580] cursor-pointer focus:ring-4 focus:outline-hidden focus:ring-blue-300 rounded-lg text-sm px-5 py-2.5">
+            <span class="flex h-5 w-5 icon-[vscode-icons--file-type-json] mr-2"></span>{{ _("Export as JSON")}}
+        </button>
+    </form>
 </div>
 <div class="h-full mx-4 mt-4 text-sm text-left text-black overflow-x-auto">
     <div class="grid grid-cols-5 py-4 pl-2 text-xs font-bold text-white uppercase justify-items-start items-center bg-gray-800 px-3">
@@ -499,7 +504,6 @@ Admin - Publishers
             e.remove();
         }
     }
-
 </script>
 {% endblock additional %}
   

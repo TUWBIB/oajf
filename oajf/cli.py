@@ -157,6 +157,49 @@ def register_cli(app: Flask):
                 conn.close()
 
 
+    @oajf_cli.command(short_help="Imports publishers from json files.")
+    @click.argument('file')
+    def importPublishers(file: str):
+        """
+        Import publishers.
+        """
+
+        if not click.confirm(f'Import publishers from json file? This deletes all existing publishers including journals and uploaded excel-files. Are you sure'):
+            exit(0)
+
+        l_publisher: List[Publisher]
+        l_new: List[Publisher] = []
+        o: Publisher
+
+        with open(file,'r') as f:
+            data = json.load(f)
+
+        for i in data:
+            o = Publisher.fromDict(i)
+            l_new.append(o)
+
+        try:
+            conn = get_db()
+            l_publisher,_ = db_readPublishers(transaction_conn=conn)
+            for o in l_publisher:
+                db_deleteJournal(None,transaction_conn=conn,publisher_id=o.id)
+                db_deleteExcelFile(None,transaction_conn=conn,publisher_id=o.id)
+                db_deletePublisher(o,transaction_conn=conn)
+            for o in l_new:
+                db_savePublisher(o,transaction_conn=conn)
+            conn.commit()
+
+        except Exception as e:
+            if conn is not None:
+                conn.rollback()
+            print(e)
+            print(traceback.format_exc())
+        finally:
+            if conn is not None:
+                conn.close()
+
+        get_settings(force_reload=True)
+
 
 
     # obsolete

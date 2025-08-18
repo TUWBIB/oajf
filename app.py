@@ -28,7 +28,7 @@ from typing import List, Dict, BinaryIO,Tuple
 from ldap3 import Server, Connection, Tls, ALL
 from base64 import b64decode as decode
 
-from flask import Flask, render_template, g, request, session, redirect, url_for, flash, send_file, make_response, current_app
+from flask import Flask, render_template, g, request, session, redirect, url_for, flash, send_file, make_response, current_app, Response
 from flask.cli import AppGroup
 from flask_babel import Babel,lazy_gettext as _, ngettext
 from flask.json import jsonify
@@ -109,7 +109,7 @@ babel.init_app(app, locale_selector=get_locale)
 
 app.logger.info(f"WERKZEUG_RUN_MAIN {os.environ.get("WERKZEUG_RUN_MAIN",'')}")
 app.logger.info(f"SERVER_SOFTWARE {os.environ.get("SERVER_SOFTWARE",'')}")
-                
+
 # only setup after reload in debug mode (WERKZEUG), start immediately for gunicorn
 if os.environ.get("WERKZEUG_RUN_MAIN",'') == "true":
     db = db_init(app)
@@ -118,12 +118,20 @@ if os.environ.get("WERKZEUG_RUN_MAIN",'') == "true":
 
     MariaDBSession(app)
 
-if os.environ.get("SERVER_SOFTWARE",'').startswith("gunicorn"):
+elif os.environ.get("SERVER_SOFTWARE",'').startswith("gunicorn"):
     db = db_init(app)
     atexit.register(db.disconnect)
     db.signalhandler = signal.signal(signal.SIGTERM,db.disconnect)
 
     MariaDBSession(app)
+
+# TODO - check: 20250818
+# make sure db gets inited even if none of the above conditions applies
+# Werkzeug refused to start debug mode all of a sudden, started working again after
+# recreating the virtual environment. huh?
+else:
+    db = db_init(app)
+
 register_cli(app)
 
 PAGE_LENGTH = 100
@@ -731,6 +739,23 @@ def admin_save_setting():
 def admin_publishers_get():
     get_publishers()
     return render_template("admin_publishers.html")
+
+@app.get("/admin_export_publishers_as_json")
+@logfunc
+@login_required
+def admin_export_publishers_as_json():
+    p: Publisher
+    l: List[Dict] = []
+    get_publishers()
+    for p in g.publishers:
+        d = p.toDict(includeid=False)
+        l.append(d)
+
+    content = json.dumps(l,indent=4)
+    return Response(content, 
+            mimetype='application/json',
+            headers={'Content-Disposition':'attachment;filename=publishers.json'})
+
 
 @app.post("/admin_delete_publisher")
 @logfunc
