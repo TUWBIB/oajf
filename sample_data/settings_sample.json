@@ -1,0 +1,117 @@
+{
+    "doaj_dump_link": {
+        "value": "https://doaj.org/csv",
+        "value_en": "",
+        "value_de": ""
+    },
+    "doaj_changes_link": {
+        "value": "https://docs.google.com/spreadsheets/d/1Kv3MbgFSgtSDnEGkA2JacrSjunRu0umHeZCtcMeqO5E/export?format=xlsx&id=1Kv3MbgFSgtSDnEGkA2JacrSjunRu0umHeZCtcMeqO5E",
+        "value_en": "",
+        "value_de": ""
+    },
+    "application_form_publication_funds_url": {
+        "value": "",
+        "value_en": "https://some.organization.com/url_en",
+        "value_de": "https://some.organization.com/url_de"
+    },
+    "application_form_publication_funds_label": {
+        "value": "",
+        "value_en": "funding via publication fund",
+        "value_de": "F\u00f6rderung durch.Publikationsfonds"
+    },
+    "application_form_fwf_url": {
+        "value": "",
+        "value_en": "https://some.organization.com/url_en",
+        "value_de": "https://some.organization.com/url_de"
+    },
+    "application_form_fwf_label": {
+        "value": "",
+        "value_en": "funding via FWF",
+        "value_de": "F\u00f6rderung durch FWF"
+    },
+    "text_maintenance_message": {
+        "value": "",
+        "value_en": "",
+        "value_de": ""
+    },
+    "text_accessibility": {
+        "value": "",
+        "value_en": "<h1 class=\"oajf-textstyle-heading-1 text-left\">Declaration on accessibility</h1>",
+        "value_de": "<h1 class=\"oajf-textstyle-heading-1 text-left\">Erkl\u00e4rung zur Barrierefreiheit</h1>"
+    },
+    "text_data_protection": {
+        "value": "",
+        "value_en": "<h1 class=\"font-bold text-lg\">Datenschutzerkl\u00e4rung</h1> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam aliquet vehicula leo, a rhoncus ipsum suscipit nec. Phasellus sit amet vulputate elit. Aenean sed dolor vitae lacus condimentum egestas. Vestibulum at rhoncus tortor. Vestibulum molestie quis magna ac sagittis. Vestibulum non metus porta, euismod lacus ac, lacinia enim. Suspendisse dictum fringilla felis, iaculis egestas dolor lacinia at. In bibendum massa ante, suscipit volutpat enim viverra in. Curabitur ornare mattis metus, at eleifend diam condimentum a. Curabitur mattis odio vel libero sollicitudin finibus. ",
+        "value_de": "<h1 class=\"font-bold text-lg\">Datenschutzerkl\u00e4rung</h1> Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam aliquet vehicula leo, a rhoncus ipsum suscipit nec. Phasellus sit amet vulputate elit. Aenean sed dolor vitae lacus condimentum egestas. Vestibulum at rhoncus tortor. Vestibulum molestie quis magna ac sagittis. Vestibulum non metus porta, euismod lacus ac, lacinia enim. Suspendisse dictum fringilla felis, iaculis egestas dolor lacinia at. In bibendum massa ante, suscipit volutpat enim viverra in. Curabitur ornare mattis metus, at eleifend diam condimentum a. Curabitur mattis odio vel libero sollicitudin finibus. "
+    },
+    "text_support": {
+        "value": "",
+        "value_en": "<h1 class=\"oajf-textstyle-heading-1 text-left\">Support</h1>",
+        "value_de": "<h1 class=\"oajf-textstyle-heading-1 text-left\">Support</h1>"
+    },
+    "text_legal": {
+        "value": "",
+        "value_en": "<h1 class=\"oajf-textstyle-heading-1 text-left\">Legal Notice</h1>",
+        "value_de": "<h1 class=\"oajf-textstyle-heading-1 text-left\">Impressum</h1>"
+    },
+    "url_accessibility": {
+        "value": "",
+        "value_en": "",
+        "value_de": ""
+    },
+    "url_data_protection": {
+        "value": "",
+        "value_en": "https://some.organization.com/url_en",
+        "value_de": "https://some.organization.com/url_de"
+    },
+    "url_support": {
+        "value": "",
+        "value_en": "",
+        "value_de": ""
+    },
+    "url_legal": {
+        "value": "",
+        "value_en": "",
+        "value_de": ""
+    },
+    "pagetitle_accessibility": {
+        "value": "",
+        "value_en": "Accessibility Declaration | OAJF",
+        "value_de": "Barrierefreiheitserkl\u00e4rung | OAJF"
+    },
+    "pagetitle_data_protection": {
+        "value": "",
+        "value_en": "Data Protection Declaration | OAJF",
+        "value_de": "Datenschutzerkl\u00e4rung | OAJF"
+    },
+    "pagetitle_legal": {
+        "value": "",
+        "value_en": "Legal Notice | OAJF",
+        "value_de": "Impressum | OAJF"
+    },
+    "pagetitle_support": {
+        "value": "",
+        "value_en": "Support | OAJF",
+        "value_de": "Support | OAJF"
+    },
+    "footer_left_label": {
+        "value": "",
+        "value_en": "&copy; Some organization",
+        "value_de": "&copy; Some organization"
+    },
+    "pagetitle_index": {
+        "value": "",
+        "value_en": "OAJF | Some Organization",
+        "value_de": "OAJF | Some Organization"
+    },
+    "text_index": {
+        "value": "",
+        "value_en": "Welcome dear reader..<p<>Text",
+        "value_de": "Willkommen... <p>Text"
+    },
+    "application_name": {
+        "value": "",
+        "value_en": "OAJF",
+        "value_de": "OAJF"
+    }
+}

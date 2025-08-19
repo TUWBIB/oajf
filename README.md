@@ -53,7 +53,7 @@ At the time of writing, OAJF uses the latest official versions of the frameworks
    - Apply the `sql/create_schema.sql` file to create the needed tables.
    - Copy `oajf/config.py.sample` to `oajf/config.py` and configure the database credentials.
 
-5. **First Run and Further Steps**:
+5. **First Run**:
    - In principle, you should now be able to run:
      ```bash
      ./babel_collect.sh
@@ -76,3 +76,10 @@ At the time of writing, OAJF uses the latest official versions of the frameworks
      http://127.0.0.1:5001
      ```
      and get a page with no content.
+
+6. **Next steps**:
+    - To access the backend (default url /admin_login) you need to provide some method to authenticate users. Out of the box you can use LDAP authentication, see config.py.
+    - You can configure the displayed logos in config.py.
+    - You need to initialize some settings. A sample settings.json is provided in the /sample_data directory.
+    - Create some publishers in the backend or use the provided sample data as base.
+    - Import journal data, see the sample directory for a xlsx template file, which can be imported.
