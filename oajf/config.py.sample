@@ -138,10 +138,11 @@ IP_GROUPS = {
 }
 
 
+#
+# favicon and logos
+#
 UI = {
-#
-# logos
-#
+    "favicon": "favicon.ico",
     "logo_left": "logoipsum-285.svg",
     "logo_left_alt": 
     {
