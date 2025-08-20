@@ -1,6 +1,9 @@
 import datetime
 import traceback
 import json
+import datetime
+import shutil
+import re
 from typing import List,Dict
 
 from flask import Flask,g
@@ -28,6 +31,8 @@ from oajf.util import get_publishers,get_settings,getDOAJChangesFileAsExcelWorkb
 def register_cli(app: Flask):
     oajf_cli = AppGroup('oajf')
     app.cli.add_command(oajf_cli)
+
+
 
 
     @app.cli.command(short_help="Read from an utf-8 encoded .sql file and execute every command separated by a semicolon on the database.")
@@ -66,6 +71,25 @@ def register_cli(app: Flask):
     @app.cli.command()
     def db_init_command():
         db_execute_script("schema.sql")
+
+    @oajf_cli.command(short_help="Patch base template to avoid browser caching.")
+    def patchCss():
+        """
+        creates a copy of main.css amended by the current timestamp and patches the baese.html template
+        to work around browser caching
+        use only as helper for deployment
+        """
+        now = datetime.datetime.strftime(datetime.datetime.now(),'%y%m%d_%H%M%S')
+        fileold = 'main.css'
+        filenew = f'main_{now}.css'
+        shutil.copy('static/main.css',f'static/{filenew}')
+
+        with open ('templates/base.html', 'r' ) as f:
+            content = f.read()
+            content_new = re.sub(fileold,filenew,content)
+        with open ('templates/base.html', 'w' ) as f:            
+            f.write(content_new)
+            f.flush()
 
 
     @oajf_cli.command(short_help="Export current settings as json.")
