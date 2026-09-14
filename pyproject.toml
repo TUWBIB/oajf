@@ -12,6 +12,7 @@ dependencies = [
     "mariadb>=1.1.14",
     "openpyxl>=3.1.5",
     "requests>=2.34.2",
+    "ruff>=0.16.7",
     "xlsxwriter>=3.2.9",
     "yacryptopan>=1.0.2",
 ]
