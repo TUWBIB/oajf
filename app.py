@@ -136,6 +136,38 @@ register_cli(app)
 
 PAGE_LENGTH = 100
 
+# static asset cache busting
+# content-derived version, computed once per worker, so the URL changes only
+# when the built asset actually changes (adopted from the [ref:epay] pattern)
+_asset_version_cache = {}
+
+def _asset_version(filename):
+    """Return a short content hash for a static asset, computed once per worker.
+
+    Falls back to '0' if the file cannot be read, so the page still renders and
+    the URL stays stable rather than erroring.
+    """
+    ver = _asset_version_cache.get(filename)
+    if ver is not None:
+        return ver
+    try:
+        path = os.path.join(app.static_folder, filename)
+        with open(path, 'rb') as f:
+            ver = hashlib.md5(f.read()).hexdigest()[:10]
+    except OSError:
+        ver = '0'
+    _asset_version_cache[filename] = ver
+    return ver
+
+def static_version(filename):
+    """Build a cache-busted static URL, e.g. /static/main.css?v=abc123def0.
+
+    For use in templates (exposed via the context processor). Appends the
+    content-derived version as a query string so the URL changes whenever the
+    asset changes.
+    """
+    return url_for('static', filename=filename) + '?v=' + _asset_version(filename)
+
 @app.context_processor
 def utility_processor():
     return dict(
@@ -150,7 +182,8 @@ def utility_processor():
         MESSAGE_TYPE_WARNING = MESSAGE_TYPE_WARNING,
         MESSAGE_TYPE_INFO = MESSAGE_TYPE_INFO,
         UI = current_app.config.get('UI'),
-        getSettingValueLang = getSettingValueLang
+        getSettingValueLang = getSettingValueLang,
+        static_version = static_version
         )
 
 def login_required(view):
