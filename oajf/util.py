@@ -119,7 +119,7 @@ def getDOAJChangesFileAsExcelWorkbook(url=None) -> Tuple[openpyxl.workbook.Workb
     except Exception as e:
         app.logger.error(f"exception={type(e).__name__}")
         app.logger.error(f"stacktrace={traceback.format_exc()}")
-        errs.append(_(f"Fehler beim Holen der DOAJ-Änderungen."))
+        errs.append(_("Fehler beim Holen der DOAJ-Änderungen."))
         errs.append(e)
         return wb,data,errs
 
@@ -128,7 +128,7 @@ def getDOAJChangesFileAsExcelWorkbook(url=None) -> Tuple[openpyxl.workbook.Workb
         data.seek(0)
         wb = openpyxl.load_workbook(filename=data)
     except Exception as e:
-        errs.append(_(f"Fehler beim Parsen der DOAJ-Änderungen."))
+        errs.append(_("Fehler beim Parsen der DOAJ-Änderungen."))
         errs.append(e)
         return wb,data,errs
 
@@ -159,10 +159,10 @@ def getDOAJChangesFileAsExcelWorkbook(url=None) -> Tuple[openpyxl.workbook.Workb
             vals[1] != 'ISSN' or
             vals[2] != 'Date Added'
         ):
-            errs.append(_(f"Das sheet 'Added' entspricht nicht dem erwarteten Format."))
+            errs.append(_("Das sheet 'Added' entspricht nicht dem erwarteten Format."))
             return wb,data,errs
     except Exception as e:
-        errs.append(_(f"Fehler beimn Prüfen des Formats der DOAJ-Änderungen."))
+        errs.append(_("Fehler beimn Prüfen des Formats der DOAJ-Änderungen."))
         errs.append(e)
     
         return wb,data,errs
@@ -187,7 +187,7 @@ def getDOAJDump(url=None) -> Tuple[List[Journal],List[str]]:
     try:
         r = requests.get(url, allow_redirects=True)
     except Exception as e:
-        errs.append(_(f"Fehler beim Holden des DOAJ-Dumps {e}"))
+        errs.append(_("Fehler beim Holden des DOAJ-Dumps %s") % e)
         return [],errs
     
     try:
@@ -207,7 +207,7 @@ def getDOAJDump(url=None) -> Tuple[List[Journal],List[str]]:
     except Exception as e:
         app.logger.error(f"exception={type(e).__name__}")
         app.logger.error(f"stacktrace={traceback.format_exc()}")
-        errs.append(_(f"Fehler beim Parsen des DOAJ-Dumps."))
+        errs.append(_("Fehler beim Parsen des DOAJ-Dumps."))
         errs.append(e)
         return [],errs
     
@@ -279,7 +279,7 @@ def getGeoIPFile(url=None, path=None) -> Tuple[str,List[str]]:
             r = requests.get(url, allow_redirects=True, timeout=120)
             r.raise_for_status()
         except Exception as e:
-            errs.append(_(f"Fehler beim Holen der GeoIP-Daten von {url}."))
+            errs.append(_("Fehler beim Holen der GeoIP-Daten von %s.") % url)
             errs.append(e)
             return None, errs
 
@@ -287,14 +287,14 @@ def getGeoIPFile(url=None, path=None) -> Tuple[str,List[str]]:
         content = r.content
     else:
         if not os.path.isfile(path):
-            errs.append(_(f"Datei nicht gefunden: {path}"))
+            errs.append(_("Datei nicht gefunden: %s") % path)
             return None, errs
         compressed = path.endswith('.gz')
         try:
             with open(path, 'rb') as f:
                 content = f.read()
         except Exception as e:
-            errs.append(_(f"Fehler beim Lesen der Datei {path}."))
+            errs.append(_("Fehler beim Lesen der Datei %s.") % path)
             errs.append(e)
             return None, errs
 
@@ -332,7 +332,7 @@ def getGeoIPFile(url=None, path=None) -> Tuple[str,List[str]]:
                 # IPv6 or malformed - skip (geoip table is IPv4 only)
                 continue
             if not re.fullmatch(r'[A-Z]{2}', country_code):
-                errs.append(_(f"Ungültiger Ländercode übersprungen: {country_code}"))
+                errs.append(_("Ungültiger Ländercode übersprungen: %s") % country_code)
                 continue
             writer.writerow([ip_from, ip_to, country_code])
             count += 1

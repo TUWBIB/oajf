@@ -547,7 +547,7 @@ def admin_upload_post():
                     e_issn = m[1]
                 else:
                     content_errors += 1
-                    msg = _(f"Ungültige E-ISSN {0} (Zeile {1})") 
+                    msg = _("Ungültige E-ISSN {0} (Zeile {1})")
                     flash(msg.format(e_issn,row_idx),MESSAGE_TYPE_ERROR)
 
             print_issn = str(row[3])
@@ -557,7 +557,7 @@ def admin_upload_post():
                     print_issn = m[1]
                 else:
                     content_errors += 1
-                    msg = _(f"Ungültige Print-ISSN {0} (Zeile {1})") 
+                    msg = _("Ungültige Print-ISSN {0} (Zeile {1})")
                     flash(msg.format(print_issn,row_idx),MESSAGE_TYPE_ERROR)
 
             if e_issn == 'None': e_issn = None
@@ -604,7 +604,7 @@ def admin_upload_post():
         msg = ngettext("{0} Zeitschrift gelöscht.","{0} Zeitschriften gelöscht.",cnt_deleted_journals)
         flash(msg.format(cnt_deleted_journals),MESSAGE_TYPE_SUCCESS)
         
-        flash(ngettext(f"{len(l_new)} Zeitschriften importiert",f"{len(l_new)} Zeitschriften importiert",len(l_new)),MESSAGE_TYPE_SUCCESS)
+        flash(ngettext("{0} Zeitschrift importiert","{0} Zeitschriften importiert",len(l_new)).format(len(l_new)),MESSAGE_TYPE_SUCCESS)
 
     except Exception as e:
         app.logger.error(f"exception={type(e).__name__}")
@@ -984,13 +984,13 @@ def doaj_import_update():
             for j in l_journal_db:
                 if j.e_issn:
                     if j.e_issn in m_eissn:
-                        flash(_(f"E-ISSN mehrfach gefunden für Zeitschriften in der Datenbank: {j.e_issn}"))
+                        flash(_("E-ISSN mehrfach gefunden für Zeitschriften in der Datenbank: %s") % j.e_issn)
                     else:
                         m_eissn[j.e_issn] = j
 
                 if j.print_issn:
                     if j.print_issn in m_pissn:
-                        flash(_(f"Print-ISSN mehrfach gefunden für Zeitschriften in der Datenbank: {j.print_issn}"))
+                        flash(_("Print-ISSN mehrfach gefunden für Zeitschriften in der Datenbank: %s") % j.print_issn)
                     else:
                         m_pissn[j.print_issn] = j
 

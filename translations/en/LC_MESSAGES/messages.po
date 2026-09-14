@@ -174,6 +174,13 @@ msgid_plural "{0} Zeitschriften importiert."
 msgstr[0] "{0} journal imported."
 msgstr[1] "{0} journals imported."
 
+#: app.py:607
+#, python-brace-format
+msgid "{0} Zeitschrift importiert"
+msgid_plural "{0} Zeitschriften importiert"
+msgstr[0] "{0} journal imported."
+msgstr[1] "{0} journals imported."
+
 #: app.py:1023
 msgid "Fehler beim Import der Zeitschriften."
 msgstr "Error importing journals."
