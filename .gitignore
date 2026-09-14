@@ -5,6 +5,7 @@
 *.woff
 node_modules/
 __pycache__/
+.venv/
 package-lock.json
 static/custom/
 static/main.css

@@ -23,15 +23,22 @@ OAJF makes use of the following icon sets:
 
 At the time of writing, OAJF uses the latest official versions of the frameworks mentioned. No effort has been made to determine minimum version requirements.
 
+The project's Python environment is managed by [uv](https://docs.astral.sh/uv/).
+Make sure `uv` is installed and available on your `PATH`.
+
 #### Steps
 
 1. **Clone the Repository**:
    - Clone the repository to your local machine.
 
-2. **Virtual Python Environment**:
-   - Create a Python virtual environment and install the needed libraries:
+2. **Python Environment (uv)**:
+   - Synchronize the project's virtual environment from `pyproject.toml` / `uv.lock`:
      ```bash
-     pip3 install -r virtenv
+     uv sync
+     ```
+   - To add or remove a dependency, always use `uv add <package>` / `uv remove <package>` (never edit `pyproject.toml` by hand). After any dependency change, compile the production requirements file with:
+     ```bash
+     uv pip compile pyproject.toml -o requirements.txt
      ```
 
 3. **Install Node Modules**:
@@ -54,7 +61,7 @@ At the time of writing, OAJF uses the latest official versions of the frameworks
    - Copy `oajf/config.py.sample` to `oajf/config.py` and configure the database credentials.
 
 5. **First Run**:
-   - In principle, you should now be able to run:
+   - The helper scripts use `uv run` so they work with the uv-managed environment:
      ```bash
      ./babel_collect.sh
      ```
@@ -70,6 +77,7 @@ At the time of writing, OAJF uses the latest official versions of the frameworks
      ```bash
      ./runserver_loc.sh
      ```
+     (equivalent to `uv run flask run --host=0.0.0.0 --port 5001`)
 
    - You should now be able to open:
      ```

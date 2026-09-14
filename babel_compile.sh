@@ -1,1 +1,1 @@
-pybabel compile -d ./translations -l en
+uv run pybabel compile -d ./translations -l en
