@@ -113,11 +113,17 @@ def register_cli(app: Flask):
         with open(file,'w') as f:
             json.dump(d,f,indent=4)
 
-    @oajf_cli.command(short_help="Deletes current settings and imports new settings from a json file. Use with care.")
+    @oajf_cli.command(short_help="Replaces settings from a json file. Optionally restrict which settings are replaced.")
     @click.argument('file')
-    def importSettings(file: str):
+    @click.option('--names', '-n', multiple=True, default=None,
+                  help="Only replace the given setting name(s) (may be given multiple times).")
+    def importSettings(file: str, names: tuple):
         """
-        Deletes current settings and reimports from a json file.
+        Imports settings from a json file.\n
+        By default ALL current settings are deleted and reimported from the file\n
+        (after a confirmation prompt). Use --names to restrict the operation to\n
+        specific setting name(s); in that case only those settings present in\n
+        both the file and the filter are replaced, all others are left untouched.
         """
         db = db_init(app)
 
@@ -128,19 +134,46 @@ def register_cli(app: Flask):
         with open(file,'r') as f:
             data = json.load(f)
 
-        for k,d in data.items():
-            o = Setting()
-            o.name = k
-            o.value = d.get('value',None)
-            o.value_en = d.get('value_en',None)
-            o.value_de = d.get('value_de',None)
-            l_new.append(o)
+        filter_set = set(names)
+        replace_all = len(filter_set) == 0
+
+        if replace_all:
+            if not click.confirm('Replace ALL settings with the contents of the file? Existing settings not present in the file will be deleted.'):
+                print("Aborted.")
+                return
+            l_new = []
+            for k,d in data.items():
+                o = Setting()
+                o.name = k
+                o.value = d.get('value',None)
+                o.value_en = d.get('value_en',None)
+                o.value_de = d.get('value_de',None)
+                l_new.append(o)
+        else:
+            for k,d in data.items():
+                if k not in filter_set:
+                    continue
+                o = Setting()
+                o.name = k
+                o.value = d.get('value',None)
+                o.value_en = d.get('value_en',None)
+                o.value_de = d.get('value_de',None)
+                l_new.append(o)
+
+            if not l_new:
+                print(f"No settings matched the filter {sorted(filter_set)} in the file.")
+                return
+
+            if not click.confirm(f'Replace {len(l_new)} setting(s) {sorted(o.name for o in l_new)} with the contents of the file?'):
+                print("Aborted.")
+                return
 
         try:
             conn = get_db()
-            l_setting = db_readSettings(transaction_conn=conn)
-            for o in l_setting:
-                db_deleteSetting(o,transaction_conn=conn)
+            if replace_all:
+                l_setting = db_readSettings(transaction_conn=conn)
+                for o in l_setting:
+                    db_deleteSetting(o,transaction_conn=conn)
             for o in l_new:
                 db_saveSetting(o,transaction_conn=conn)
             conn.commit()
