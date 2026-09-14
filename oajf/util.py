@@ -1,5 +1,10 @@
 import io
+import os
+import gzip
+import re
+import tempfile
 import traceback
+import datetime
 from functools import wraps
 from typing import List, Tuple
 
@@ -13,6 +18,12 @@ from flask_babel import lazy_gettext as _
 from oajf.db import readPublishers as db_readPublishers
 from oajf.db import readSettings as db_readSettings
 from oajf.models import Journal
+
+# Default GeoIP source: DB-IP dbip-country-lite (CC-BY-4.0, monthly updates).
+# Used when no geoip_link setting / --url is configured.
+# The URL is versioned by year/month; the {YYYY} and {MM} placeholders are
+# replaced with the current date before the request is made.
+DEFAULT_GEOIP_URL = "https://download.db-ip.com/free/dbip-country-lite-{YYYY}-{MM}.csv.gz"
 
 def logfunc(f):
     from oajf.db import getPoolStats
@@ -201,4 +212,142 @@ def getDOAJDump(url=None) -> Tuple[List[Journal],List[str]]:
         return [],errs
     
     return l_journal,[]
+
+
+def _is_ipv4(ip: str) -> bool:
+    """
+    Cheap IPv4 check for a dotted-quad string (no network I/O, no extra deps).
+    Returns True only for 4 dot-separated decimal octets 0-255, with no leading
+    signs/whitespace. Used to filter IPv6 out of the GeoIP source CSV.
+    """
+    if not isinstance(ip, str):
+        return False
+    parts = ip.split('.')
+    if len(parts) != 4:
+        return False
+    for part in parts:
+        if not part.isdigit():
+            return False
+        if part != '0' and part.startswith('0'):
+            # disallow leading zeros (e.g. "01") - not a canonical dotted quad
+            return False
+        if not (0 <= int(part) <= 255):
+            return False
+    return True
+
+
+def getGeoIPFile(url=None, path=None) -> Tuple[str,List[str]]:
+    """
+    Obtains a GeoIP range file in the format `ip_from,ip_to,country_code` and
+    writes it to a temporary CSV file, returning the path.
+
+    Data source: DB-IP `dbip-country-lite` (CC-BY-4.0,
+    https://db-ip.com), which provides `network_start_ip,network_end_ip,country_code,country_name`
+    in dotted-quad form.
+
+    - If `path` is given, it is treated as a local file (.csv or .csv.gz) and
+      no download happens.
+    - Otherwise the URL is resolved from the `geoip_link` setting, then `--url`
+      override, then the bundled default (DEFAULT_GEOIP_URL).
+    - The URL may contain `{YYYY}` and `{MM}` placeholders, substituted with the
+      current year/month (the DB-IP source versions files by date).
+
+    Transformations applied:
+      1. gunzip when the source is gzip-compressed (by extension or magic bytes)
+      2. parse as CSV
+      3. keep only IPv4 rows (drop IPv6 - the geoip table uses INET4)
+      4. drop the `country_name` column
+      5. validate the 2-char country code
+
+    Returns (path_to_temp_csv, errs). The temp file is deleted by the caller
+    (expected in a `finally`).
+    """
+    errs: List[str] = []
+
+    if not path:
+        if not url:
+            url = getSettingValue('geoip_link')
+        if not url:
+            url = DEFAULT_GEOIP_URL
+
+        # substitute year/month placeholders ({YYYY}, {MM}) with the current date
+        now = datetime.datetime.now()
+        url = url.replace('{YYYY}', f"{now.year:04d}").replace('{MM}', f"{now.month:02d}")
+
+        try:
+            app.logger.info(f"downloading GeoIP data from {url}")
+            r = requests.get(url, allow_redirects=True, timeout=120)
+            r.raise_for_status()
+        except Exception as e:
+            errs.append(_(f"Fehler beim Holen der GeoIP-Daten von {url}."))
+            errs.append(e)
+            return None, errs
+
+        compressed = url.endswith('.gz')
+        content = r.content
+    else:
+        if not os.path.isfile(path):
+            errs.append(_(f"Datei nicht gefunden: {path}"))
+            return None, errs
+        compressed = path.endswith('.gz')
+        try:
+            with open(path, 'rb') as f:
+                content = f.read()
+        except Exception as e:
+            errs.append(_(f"Fehler beim Lesen der Datei {path}."))
+            errs.append(e)
+            return None, errs
+
+    # fall back to sniffing gzip magic bytes if not indicated by the suffix
+    if not compressed and len(content) >= 2 and content[0] == 0x1f and content[1] == 0x8b:
+        compressed = True
+
+    text = None
+    try:
+        if compressed:
+            text = gzip.decompress(content).decode('utf-8')
+        else:
+            text = content.decode('utf-8')
+    except Exception as e:
+        errs.append(_("Fehler beim Dekomprimieren/Dekodieren der GeoIP-Daten."))
+        errs.append(e)
+        return None, errs
+
+    tmp = None
+    count = 0
+    try:
+        fd, tmp_path = tempfile.mkstemp(suffix='.csv', prefix='geoip_')
+        tmp = open(fd, 'w', encoding='utf-8', newline='')
+        writer = csv.writer(tmp)
+        reader = csv.reader(io.StringIO(text, newline=''))
+        for row in reader:
+            if not row:
+                continue
+            if len(row) < 3:
+                continue
+            ip_from = row[0].strip()
+            ip_to = row[1].strip()
+            country_code = row[2].strip()
+            if not _is_ipv4(ip_from) or not _is_ipv4(ip_to):
+                # IPv6 or malformed - skip (geoip table is IPv4 only)
+                continue
+            if not re.fullmatch(r'[A-Z]{2}', country_code):
+                errs.append(_(f"Ungültiger Ländercode übersprungen: {country_code}"))
+                continue
+            writer.writerow([ip_from, ip_to, country_code])
+            count += 1
+        tmp.flush()
+        tmp.close()
+        tmp = None
+    except Exception as e:
+        app.logger.error(f"exception={type(e).__name__}")
+        app.logger.error(f"stacktrace={traceback.format_exc()}")
+        errs.append(_("Fehler beim Verarbeiten der GeoIP-Daten."))
+        errs.append(e)
+        if tmp is not None:
+            tmp.close()
+        return None, errs
+
+    app.logger.info(f"wrote {count} IPv4 GeoIP ranges to {tmp_path}")
+    return tmp_path, errs
 

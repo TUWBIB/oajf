@@ -4,6 +4,11 @@
         "value_en": "",
         "value_de": ""
     },
+    "geoip_link": {
+        "value": "https://download.db-ip.com/free/dbip-country-lite-{YYYY}-{MM}.csv.gz",
+        "value_en": "",
+        "value_de": ""
+    },
     "doaj_changes_link": {
         "value": "https://docs.google.com/spreadsheets/d/1Kv3MbgFSgtSDnEGkA2JacrSjunRu0umHeZCtcMeqO5E/export?format=xlsx&id=1Kv3MbgFSgtSDnEGkA2JacrSjunRu0umHeZCtcMeqO5E",
         "value_en": "",

@@ -17,6 +17,11 @@ OAJF makes use of the following icon sets:
 - [VSCode Icons](https://github.com/vscode-icons/vscode-icons)
 - [Element Plus Icons](https://github.com/element-plus/element-plus-icons)
 
+The GeoIP database is sourced from [DB-IP](https://db-ip.com)
+(`dbip-country-lite`), licensed under
+[CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/). It is refreshed
+with `flask oajf importGeoIP` (download or local `.csv.gz`).
+
 ### Installation and Development Environment
 
 #### Prerequisites

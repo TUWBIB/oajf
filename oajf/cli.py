@@ -1,3 +1,4 @@
+import os
 import datetime
 import traceback
 import json
@@ -26,7 +27,7 @@ from oajf.db import (
     deleteSetting as db_deleteSetting,
     saveSetting as db_saveSetting
 )
-from oajf.util import get_publishers,get_settings,getDOAJChangesFileAsExcelWorkbook,getDOAJDump
+from oajf.util import get_publishers,get_settings,getDOAJChangesFileAsExcelWorkbook,getDOAJDump,getGeoIPFile
 
 def register_cli(app: Flask):
     oajf_cli = AppGroup('oajf')
@@ -155,30 +156,63 @@ def register_cli(app: Flask):
 
         get_settings(force_reload=True)
 
-    @oajf_cli.command(short_help="Renews geoip info.")
-    @click.argument('file')
-    def importGeoIP(file: str):
+    @oajf_cli.command(short_help="Downloads and imports updated geoip data (DB-IP dbip-country-lite by default).")
+    @click.argument('file', required=False)
+    @click.option('--url', default=None, help="URL / local path override for the source (default: geoip_link setting).")
+    def importGeoIP(file: str = None, url: str = None):
         """
-        Import geoip-file.
+        Imports geoip data.\n
+        Without FILE the data is downloaded from the `geoip_link` setting\n
+        (falling back to the bundled DB-IP dbip-country-lite URL, CC-BY-4.0).\n
+        FILE may be a local .csv or .csv.gz in the source's format\n
+        (network_start_ip,network_end_ip,country_code[,country_name]).\n
+        IPv4 ranges are kept; IPv6 rows are skipped; data is loaded into the\n
+        `geoip` table after a confirmation prompt.
         """
         db = db_init(app)
 
+        tmp_file, errs = getGeoIPFile(url=url, path=file)
+        if errs:
+            for e in errs:
+                print(e)
+            exit(1)
+        if tmp_file is None:
+            print("No geoip data obtained.")
+            exit(1)
+
         try:
-            conn = get_db()
-            cur = conn.cursor()
-            sql = "DELETE FROM `geoip`;"
-            cur.execute(sql)
-            sql = f"LOAD DATA LOCAL INFILE '{file}' INTO TABLE `geoip` FIELDS TERMINATED BY ',' (ip_from,ip_to,country_code);"
-            cur.execute(sql)
-            conn.commit()
-        except Exception as e:
-            if conn is not None:
-                conn.rollback()
-            print(e)
-            print(traceback.format_exc())
+            n_rows = 0
+            with open(tmp_file, 'r', encoding='utf-8') as f:
+                for _ in f:
+                    n_rows += 1
+
+            if not click.confirm(f'Replace the geoip table with {n_rows} ranges from '
+                                 f'{file if file else url if url else "the configured source"}?'):
+                print("Aborted.")
+                return
+
+            conn = None
+            try:
+                conn = get_db()
+                cur = conn.cursor()
+                sql = "DELETE FROM `geoip`;"
+                cur.execute(sql)
+                sql = f"LOAD DATA LOCAL INFILE '{tmp_file}' INTO TABLE `geoip` FIELDS TERMINATED BY ',' (ip_from,ip_to,country_code);"
+                cur.execute(sql)
+                conn.commit()
+                print(f"Imported {n_rows} geoip ranges.")
+            except Exception as e:
+                if conn is not None:
+                    conn.rollback()
+                print(e)
+                print(traceback.format_exc())
+                exit(1)
+            finally:
+                if conn is not None:
+                    conn.close()
         finally:
-            if conn is not None:
-                conn.close()
+            if tmp_file and os.path.isfile(tmp_file):
+                os.remove(tmp_file)
 
 
     @oajf_cli.command(short_help="Imports publishers from json files.")
